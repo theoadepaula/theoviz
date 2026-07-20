@@ -43,4 +43,56 @@ test_that("grade_rgba monta rgba valido para o plotly", {
 
 test_that("nenhuma cor de serie colide com outra", {
   expect_length(unique(paleta()), 4L)
+  expect_length(unique(paleta(modo = "escuro")), 4L)
+})
+
+# --- modo escuro -----------------------------------------------------------
+# Mesma logica dos testes acima: os valores ficam travados para que troca-los
+# exija tocar no teste, e portanto revalidar. Medidos em 2026-07-19 com o
+# validador do skill `dataviz`, contra a superficie #1a1a19: pior par adjacente
+# DeltaE 13,0 (deutan); os quatro slots acima de 3:1 de contraste.
+
+test_that("as cores de serie do modo escuro sao exatamente as validadas", {
+  expect_identical(
+    paleta(modo = "escuro"),
+    c(s1 = "#3987e5", s2 = "#008300", s3 = "#d55181", s4 = "#c98500")
+  )
+})
+
+test_that("o modo claro segue sendo o padrao", {
+  expect_identical(paleta(), paleta(modo = "claro"))
+  expect_identical(tinta(),  tinta(modo = "claro"))
+})
+
+test_that("o verde e o unico slot igual nos dois modos", {
+  iguais <- paleta() == paleta(modo = "escuro")
+  expect_identical(names(paleta())[iguais], "s2")
+})
+
+test_that("modo escuro respeita n, na ordem", {
+  expect_identical(paleta(1, modo = "escuro"), c(s1 = "#3987e5"))
+  expect_identical(paleta(2, modo = "escuro"), c(s1 = "#3987e5", s2 = "#008300"))
+})
+
+test_that("as tintas do modo escuro sao as validadas", {
+  expect_identical(
+    tinta(modo = "escuro"),
+    c(forte = "#ffffff", media = "#c3c2b7", fraca = "#898781",
+      grade = "#2c2c2a", eixo = "#383835", fundo = "#1a1a19")
+  )
+  expect_identical(tinta("fundo", modo = "escuro"), "#1a1a19")
+})
+
+test_that("a tinta fraca e a mesma nos dois modos, de proposito", {
+  expect_identical(tinta("fraca"), tinta("fraca", modo = "escuro"))
+})
+
+test_that("modo desconhecido e rejeitado", {
+  expect_error(paleta(modo = "sepia"))
+  expect_error(tinta(modo = "sepia"))
+})
+
+test_that("os dois modos tem os mesmos nomes de slot e de tinta", {
+  expect_identical(names(paleta()), names(paleta(modo = "escuro")))
+  expect_identical(names(tinta()),  names(tinta(modo = "escuro")))
 })
