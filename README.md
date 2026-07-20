@@ -38,9 +38,40 @@ fundo branco. Daí a regra que acompanha esta paleta: **todo gráfico traz rótu
 direto na ponta da série**, além da legenda. Identidade de série nunca depende
 só de cor.
 
+#### Modo escuro — `paleta(modo = "escuro")`
+
+```r
+paleta(modo = "escuro")
+#>        s1        s2        s3        s4
+#> "#3987e5" "#008300" "#d55181" "#c98500"
+```
+
+Não é um clareamento automático do modo claro: são **passos próprios, validados
+contra a superfície escura** (`#1a1a19`). O verde é o único slot igual nos dois
+modos.
+
+Medições de 2026-07-19:
+
+| | pior par adjacente | contraste |
+|---|---|---|
+| claro (`#fcfcfb`) | ΔE 16,3 (deutan) | `s3` 2,62 e `s4` 2,11 — **abaixo de 3:1** |
+| escuro (`#1a1a19`) | ΔE 13,0 (deutan) | os quatro **acima de 3:1** |
+
+No escuro a paleta é mais segura em contraste que no claro. A regra do rótulo
+direto nasce do modo claro e vale nos dois, por consistência.
+
+> ⚠️ **Limite do modo escuro:** considerando *todos* os pares, e não só os
+> adjacentes, `s2` (verde) × `s4` (âmbar) cai para ΔE 6,9 em protanopia — dentro
+> da faixa 6–8, que só é legal com codificação secundária. Um gráfico escuro que
+> use **somente esses dois** precisa de rótulo direto ou textura. Usando os slots
+> na ordem, o problema não aparece.
+
 `tinta()` traz os neutros (texto, grade, eixo, fundo) — separados das cores de
-série porque nunca codificam dado, só estrutura. `grade_rgba()` devolve a grade
-com alfa, que o plotly precisa para o fundo transparente do tema escuro do site.
+série porque nunca codificam dado, só estrutura. Também aceita
+`modo = "escuro"`. A tinta `fraca` é a mesma nos dois modos de propósito: é o
+cinza que fica legível sobre claro e sobre escuro. `grade_rgba()` devolve a
+grade com alfa, que o plotly precisa para o fundo transparente do site — e
+serve aos dois modos, por isso não tem argumento `modo`.
 
 ### Tabelas — `tabela_gt()`, `fmt_br()`, `fmt_pct_br()`
 

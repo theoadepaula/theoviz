@@ -1,6 +1,6 @@
 Package: theoviz
 Title: Identidade Visual dos Artigos de Dados Abertos
-Version: 0.1.0
+Version: 0.2.0
 Authors@R:
     person("Theo", "Albuquerque de Paula",
            email = "theophd@gmail.com",
