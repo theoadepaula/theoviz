@@ -1,0 +1,207 @@
+---
+title: "Identidade visual dos artigos: como usar e por quê"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Identidade visual dos artigos: como usar e por quê}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+library(theoviz)
+```
+
+Este pacote não é uma coleção de utilitários bonitos. Ele é a resposta a um
+problema concreto: em julho de 2026, ao comparar três projetos de dados abertos
+do mesmo autor, descobriu-se que as mesmas cores, o mesmo estilo de tabela e a
+mesma formatação numérica estavam **copiados nos três**, sob três nomes
+diferentes — `COR$s1`, `PAL["slot1"]`, `CORES["s1"]`. Eram idênticos byte a
+byte.
+
+Três cópias divergem. Um pacote, não.
+
+## A paleta é um mecanismo de segurança
+
+As quatro cores de série não foram escolhidas por gosto. Elas passaram por um
+validador de daltonismo (protanopia, deuteranopia, tritanopia), e a separação
+entre pares adjacentes ficou em ΔE 17,6 no pior caso — contra um piso de 8.
+
+```{r}
+paleta()
+```
+
+Você pede menos que quatro quando o gráfico tem menos séries:
+
+```{r}
+paleta(2)
+```
+
+**A ordem dos slots faz parte da validação.** Usar `s1` e `s3` em duas séries é
+seguro; trocar `s2` por uma cor "parecida" não é. Há teste travando os valores
+exatos: se ele quebrar depois de uma mudança de cor, a pergunta certa não é
+"como faço o teste passar", é "revalidei o contraste?".
+
+### O limite que gera uma regra
+
+O magenta (`s3`) fica **abaixo de 3:1 de contraste** sobre fundo claro. Isso não
+se conserta trocando o tom — se trocasse, quebraria a separação para daltônicos,
+que é a restrição mais dura.
+
+Então o limite vira regra de desenho: **todo gráfico traz rótulo direto na ponta
+da série, além da legenda.** A identidade de uma série nunca pode depender só da
+cor. É por isso que essa regra aparece em todos os projetos que usam este
+pacote.
+
+### Modo escuro
+
+```{r}
+paleta(modo = "escuro")
+```
+
+Não é clareamento automático do modo claro — são passos próprios, validados
+contra a superfície escura (`#1a1a19`). O verde é o único slot igual nos dois
+modos.
+
+O resultado contraria a intuição:
+
+| | pior par adjacente | contraste vs superfície |
+|---|---|---|
+| claro (`#fcfcfb`) | ΔE 16,3 (deutan) | `s3` 2,62 e `s4` 2,11 — **abaixo de 3:1** |
+| escuro (`#1a1a19`) | ΔE 13,0 (deutan) | os quatro **acima de 3:1** |
+
+No escuro a paleta é mais segura em contraste que no claro. A regra do rótulo
+direto nasce do modo claro, e vale nos dois por consistência.
+
+Um limite novo acompanha o modo escuro: olhando *todos* os pares, e não só os
+adjacentes, `s2` × `s4` (verde × âmbar) cai para **ΔE 6,9 em protanopia** —
+dentro da faixa 6–8, legal apenas com codificação secundária. Um gráfico escuro
+que use **somente esses dois slots** precisa de rótulo direto ou textura. Usando
+os slots na ordem, o problema não aparece.
+
+### Tintas neutras
+
+Cinzas de texto, grade, eixo e fundo. Ficam separados das cores de série porque
+**nunca codificam dado** — só estrutura.
+
+```{r}
+tinta()
+tinta("grade")
+tinta("fundo", modo = "escuro")
+```
+
+A tinta `fraca` é a mesma nos dois modos, de propósito: é o cinza que fica
+legível sobre claro e sobre escuro. Isso importa porque os gráficos do site usam
+fundo transparente, para o widget herdar a cor da página em vez de cravar um
+branco dentro do tema escuro.
+
+Fundo transparente é também o motivo de `grade_rgba()` existir: com alfa, que
+hexadecimal de 6 dígitos não carrega.
+
+```{r}
+grade_rgba()
+grade_rgba(0.4)
+```
+
+Ela serve aos dois modos — por isso não tem argumento `modo`.
+
+## Tabelas
+
+`tabela_gt()` é o tema canônico. Em uma frase: régua horizontal apenas,
+cabeçalho discreto alinhado à esquerda, nenhuma linha vertical. Coluna se separa
+por espaço, não por tinta.
+
+```{r}
+dados <- data.frame(
+  atividade = c("Coleta seletiva", "Varrição manual", "Varrição mecanizada"),
+  valor     = c(54549, 1067450, 213081)
+)
+
+dados |>
+  tabela_gt(
+    titulo    = "Quantitativos de 2025",
+    subtitulo = "Últimos valores publicados",
+    nota      = "Fonte: *relatórios anuais do SLU/DF*."
+  ) |>
+  fmt_br(valor)
+```
+
+Duas coisas que parecem detalhe e não são:
+
+- **`tabular-nums`** entra no CSS da tabela. Sem isso as casas decimais não
+  alinham na vertical e a coluna de número fica tremida.
+- **Sem moldura.** A tabela flutua no texto em vez de virar caixa.
+
+E a regra que dá sentido ao pacote: **não reimplemente o layout dentro do
+projeto.** Foi exatamente assim que os três divergiram. Mudou o estilo? Muda
+aqui, sobe a versão.
+
+## Números
+
+```{r}
+num_br(1234567)
+num_br(33.126, dec = 2)
+pct_br(33.126)
+mil(137063)
+```
+
+Usa `formatC()`, não `format()`. A diferença não é cosmética: `format()` alinha
+o vetor inteiro a uma largura comum, então o número curto sai com espaço na
+frente — que aparece calado no meio de uma frase de artigo. Duas das três
+implementações antigas tinham esse defeito, contornado com `trim = TRUE`.
+
+## Como um projeto adota
+
+Cada projeto carrega o pacote no seu arquivo de tema e dá um **alias local**,
+para não mexer nos `.qmd` já escritos:
+
+```r
+library(theoviz)
+
+tabela <- tabela_gt        # relatorios-slu, cargos-executivo-federal
+tabela_amb <- tabela_gt    # anuario-mineral-brasileiro
+```
+
+E constrói o tema de ggplot **sobre** a paleta, em vez de repetir hexadecimais:
+
+```r
+tema_projeto <- function() {
+  ggplot2::theme_minimal() +
+    ggplot2::theme(
+      text       = ggplot2::element_text(colour = tinta("media")),
+      panel.grid = ggplot2::element_line(colour = tinta("grade"))
+    )
+}
+```
+
+## O que este pacote deliberadamente não tem
+
+**Tema de ggplot.** Parecia candidato óbvio, mas os projetos divergem por
+motivos reais: um pinta superfície de fundo e mostra grade só no eixo Y; outro
+não pinta fundo e mostra as duas grades; um terceiro usa plotly, para o qual um
+tema ggplot não serve de nada. Unificar exigiria parametrizar até o ponto em que
+o pacote não decide mais nada — e um pacote que não decide nada não elimina
+duplicação, só a move.
+
+**Helpers de interatividade.** Eles codificam decisões de cada projeto: o que
+acende no hover, o que o tooltip mostra. Isso é desenho de interação, não
+identidade visual.
+
+A fronteira do pacote é essa: **o que era idêntico entre projetos entra; o que
+diverge por razão legítima fica fora.**
+
+## O risco que sobra: divergir no tempo
+
+O site renderiza os artigos com `freeze`. Um artigo já congelado **não**
+re-renderiza quando este pacote muda — então uma alteração de layout faria o
+site exibir dois estilos ao mesmo tempo, os artigos novos com o novo e os
+antigos com o antigo.
+
+A cura, a cada mudança que afete layout:
+
+```bash
+quarto render quarto --no-freeze
+```
+
+É o problema antigo com outro eixo. Antes, três cópias divergiam no **espaço**;
+agora, uma fonte só pode divergir no **tempo**.

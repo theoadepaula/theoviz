@@ -147,6 +147,14 @@ quarto render quarto --no-freeze
 É o problema antigo com outro eixo. Antes, três cópias divergiam no espaço;
 agora, uma fonte só pode divergir no tempo.
 
+## Documentação
+
+```r
+?theoviz              # visão geral: as três famílias, a fronteira do pacote
+?paleta               # ajuda de cada função
+vignette("theoviz")   # o passo a passo, com o raciocínio por trás das decisões
+```
+
 ## Desenvolvimento
 
 ```bash
@@ -154,6 +162,25 @@ R CMD INSTALL .
 Rscript -e 'testthat::test_dir("tests/testthat")'
 ```
 
+Ciclo completo, antes de abrir PR:
+
+```bash
+Rscript -e 'roxygen2::roxygenise(".")'   # regenera man/ e NAMESPACE
+R CMD build .
+R CMD check theoviz_*.tar.gz --as-cran
+```
+
+> **`man/` e `NAMESPACE` são gerados — não edite à mão.** A documentação vive
+> nos blocos roxygen, junto do código que ela descreve. O `NAMESPACE` já foi
+> mantido manualmente neste repo; não é mais.
+
+O `R CMD check --as-cran` passa limpo. Restam um NOTE de *New submission*, que
+só interessa a quem submete ao CRAN, e um WARNING de `qpdf` ausente — ferramenta
+da máquina, não defeito do pacote.
+
+O CI roda o mesmo check em Ubuntu e Windows a cada push e PR.
+
 Os testes travam os valores exatos da paleta e das tintas de propósito. Se um
 deles quebrar depois de uma mudança de cor, a pergunta certa não é "como faço o
-teste passar" — é "revalidei o contraste?".
+teste passar" — é "revalidei o contraste?". O CI existe para que essa pergunta
+apareça no PR, e não depois do merge.

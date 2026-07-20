@@ -3,3 +3,9 @@
 .RData
 .Ruserdata
 *.Rproj
+
+# artefatos de R CMD build / check
+*.tar.gz
+*.Rcheck/
+/docs/
+inst/doc

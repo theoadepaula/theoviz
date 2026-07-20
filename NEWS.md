@@ -1,5 +1,31 @@
 # theoviz 0.2.0
 
+## Documentação e infraestrutura de pacote
+
+O `R CMD check` acusava um WARNING: **nenhuma das nove funções exportadas tinha
+página de ajuda**. Havia blocos roxygen no código, mas o `man/` nunca fora
+gerado e o `NAMESPACE` era mantido à mão. `?paleta` não funcionava depois de
+instalado.
+
+- **`man/` gerado por roxygen2**, e o `NAMESPACE` passa a ser gerado junto —
+  não edite mais os dois à mão. `Roxygen: list(markdown = TRUE)` no
+  `DESCRIPTION`, que os blocos já assumiam.
+- **`?theoviz`** — página de visão geral com as três famílias de funções, a
+  fronteira do pacote e o aviso do `freeze`.
+- **`vignette("theoviz")`** — o passo a passo com o raciocínio: por que a paleta
+  é mecanismo de segurança e não escolha estética, por que o limite de contraste
+  do `s3` vira a regra do rótulo direto, e por que tema de ggplot ficou de fora.
+- **CI** (`.github/workflows/R-CMD-check.yaml`) — check em Ubuntu e Windows a
+  cada push e PR. Como os testes travam os valores de cor de propósito, o CI faz
+  a pergunta "revalidei o contraste?" aparecer **no PR**, não depois do merge.
+- **`.Rbuildignore`** (não existia) e `.gitignore` cobrindo artefatos de build.
+- `DESCRIPTION`: `Depends: R (>= 4.1)`, `BugReports`, `Language: pt-BR`,
+  `VignetteBuilder`.
+
+`R CMD check --as-cran` agora passa limpo. Sobram um NOTE de "New submission",
+que só vale para CRAN, e um WARNING de `qpdf` ausente, que é ferramenta da
+máquina e não defeito do pacote.
+
 ## Modo escuro na paleta
 
 `paleta()` e `tinta()` agora aceitam `modo = "escuro"`.
