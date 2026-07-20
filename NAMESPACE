@@ -1,0 +1,11 @@
+# Gerado a mao. Se um dia rodar roxygen2, este arquivo passa a ser gerado.
+export(fmt_br)
+export(fmt_pct_br)
+export(grade_rgba)
+export(mil)
+export(num_br)
+export(paleta)
+export(pct_br)
+export(tabela_gt)
+export(tinta)
+importFrom(gt,gt)
