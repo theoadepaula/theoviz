@@ -21,6 +21,44 @@ byte.
 
 Três cópias divergem. Um pacote, não.
 
+## Antes da paleta: em que página a figura vai cair
+
+Em 2026-08-09 o site trocou de direção visual — saiu *"A Sala de Leitura
+Noturna"*, entrou **"O Boletim Técnico"**. Desde a 0.3.0 o pacote carrega os
+tokens de cor desse sistema:
+
+```{r}
+site("noite")    # o chão da página
+site("filete")   # grade e base de eixo
+acento()         # o areia, único acento do sistema
+```
+
+Sim, isto é uma **cópia** do `@theme` de `src/styles/global.css`, no repo do
+site — e cópia é o que este pacote existe para eliminar. A diferença importa:
+agora há uma, datada, com a fonte escrita, e um teste que a confere contra o CSS
+do site quando o repo está na máquina. Antes havia três, e cada projeto
+inventava o cinza que faltava.
+
+O que **não** entra: tipografia, espaçamento e as regras de forma (raio zero,
+sombra zero). Isso é do CSS do site e não tem uso do lado do R. O que o pacote
+consome são as cores, porque gráfico e tabela precisam delas para pousar na
+página sem parecer recorte de outro documento.
+
+### A cor de uma figura sai de onde
+
+Três funções devolvem cor, e a escolha entre elas não é de gosto:
+
+| quantas séries | o que usar |
+|---|---|
+| **uma** | `acento()` — o areia do site |
+| **duas ou mais** | `paleta()`, na ordem dos slots |
+| nenhuma (estrutura) | `tinta()` — texto, grade, eixo, fundo |
+
+Não há meio-termo. Um gráfico de três séries com uma delas em areia mistura dois
+vocabulários e quebra os dois: o areia **não entra na paleta categórica**, tanto
+porque não foi validado para daltonismo contra os quatro slots quanto porque o
+sistema do site o reserva para ação e estado ativo.
+
 ## A paleta é um mecanismo de segurança
 
 As quatro cores de série não foram escolhidas por gosto. Elas passaram por um
@@ -60,15 +98,20 @@ paleta(modo = "escuro")
 ```
 
 Não é clareamento automático do modo claro — são passos próprios, validados
-contra a superfície escura (`#1a1a19`). O verde é o único slot igual nos dois
-modos.
+contra a superfície escura. O verde é o único slot igual nos dois modos.
 
 O resultado contraria a intuição:
 
 | | pior par adjacente | contraste vs superfície |
 |---|---|---|
 | claro (`#fcfcfb`) | ΔE 16,3 (deutan) | `s3` 2,62 e `s4` 2,11 — **abaixo de 3:1** |
-| escuro (`#1a1a19`) | ΔE 13,0 (deutan) | os quatro **acima de 3:1** |
+| escuro (`#0d1014`) | ΔE 13,0 (deutan) | 5,24 / 3,86 / 4,83 / 6,21 — os quatro **acima de 3:1** |
+
+O chão mudou de `#1a1a19` para `#0d1014` em 2026-08-09 e **estes valores não
+mudaram junto**, porque não precisavam: ΔE entre as cores não depende do fundo,
+e o contraste contra um chão mais escuro só melhorou. Quem sustenta essa
+afirmação não é este parágrafo — é `tests/testthat/test-site.R`, que recalcula
+os contrastes a cada `R CMD check`.
 
 No escuro a paleta é mais segura em contraste que no claro. A regra do rótulo
 direto nasce do modo claro, e vale nos dois por consistência.
@@ -87,23 +130,38 @@ Cinzas de texto, grade, eixo e fundo. Ficam separados das cores de série porque
 ```{r}
 tinta()
 tinta("grade")
-tinta("fundo", modo = "escuro")
+tinta(modo = "escuro")
 ```
 
-A tinta `fraca` é a mesma nos dois modos, de propósito: é o cinza que fica
-legível sobre claro e sobre escuro. Isso importa porque os gráficos do site usam
-fundo transparente, para o widget herdar a cor da página em vez de cravar um
-branco dentro do tema escuro.
+**No modo escuro as tintas são os tokens do site**, desde a 0.3.0 — não valores
+próprios:
 
-Fundo transparente é também o motivo de `grade_rgba()` existir: com alfa, que
-hexadecimal de 6 dígitos não carrega.
+```{r}
+identical(tinta("fraca", modo = "escuro"), site("rotulo"))
+```
+
+Eram cinzas **quentes** herdados do sistema visual anterior (`#898781`,
+`#2c2c2a`). O Boletim é um sistema **frio**, e cinza quente sobre página fria
+não lê como neutro discreto — lê como figura recortada de outro documento.
+
+Duas consequências que quebram hábito:
+
+- **`tinta("fraca")` deixou de ser a mesma nos dois modos.** Era, até a 0.2.0.
+  O Boletim tem um piso próprio, medido contra o fundo e contra a chapa.
+- **`grade` e `eixo` são o mesmo valor no escuro.** O site usa um filete só
+  para os dois. No claro seguem distintos: o modo claro não foi rebaseado.
+
+`grade_rgba()` devolve a grade com alfa, que hexadecimal de 6 dígitos não
+carrega:
 
 ```{r}
 grade_rgba()
 grade_rgba(0.4)
 ```
 
-Ela serve aos dois modos — por isso não tem argumento `modo`.
+Ele é o recurso de **chão desconhecido**: serve quando a figura não sabe sobre
+o que vai pousar, e por isso não tem argumento `modo`. Sabendo o chão, prefira a
+grade sólida — `tinta("grade", modo = "escuro")`.
 
 ## Tabelas
 
@@ -126,11 +184,58 @@ dados |>
   fmt_br(valor)
 ```
 
-Duas coisas que parecem detalhe e não são:
+Três coisas que parecem detalhe e não são:
 
 - **`tabular-nums`** entra no CSS da tabela. Sem isso as casas decimais não
   alinham na vertical e a coluna de número fica tremida.
 - **Sem moldura.** A tabela flutua no texto em vez de virar caixa.
+- **A coluna numérica sai em mono**, e o resto em sans. *Sans é discurso, mono é
+  medida* — a fronteira é semântica, não estética.
+
+### O `gt` não herda a página
+
+Este foi o defeito mais caro que a 0.3.0 corrigiu. Até a 0.2.0 `tabela_gt()` não
+dizia **uma cor sequer**. Parecia elegância — "a tabela herda a página" — e era o
+oposto: sem instrução, o `gt` crava `background-color: #FFFFFF` com texto
+`#333333`, *inline*, e nenhum `custom.scss` derruba estilo inline.
+
+Como toda página do site é escura, toda tabela de todo artigo ia ao ar como um
+retângulo branco no meio do texto.
+
+A mesma tabela no modo escuro, apresentada aqui sobre o chão para o qual ela foi
+feita — esta vignette tem fundo claro, e uma tabela transparente com tinta clara
+por cima seria invisível nele. É o mesmo argumento, na direção inversa:
+
+```{r eval=FALSE}
+dados |>
+  tabela_gt(titulo = "Quantitativos de 2025", modo = "escuro") |>
+  fmt_br(valor)
+```
+
+```{r echo=FALSE, results='asis'}
+# O chunk acima mostra o codigo; este emite a saida ja pousada sobre o chao do
+# site. Sao dois chunks porque, num unico, a <div> escura envolveria tambem o
+# proprio codigo ecoado.
+html <- dados |>
+  tabela_gt(titulo = "Quantitativos de 2025", modo = "escuro") |>
+  fmt_br(valor) |>
+  gt::as_raw_html()
+cat('<div style="background:', site("noite"), ';padding:24px">',
+    html, '</div>', sep = "")
+```
+
+**Escolha o `modo` pela página em que a tabela vai cair:**
+
+- `"escuro"` — fundo **transparente** e tintas do site. A tabela pousa na página
+  em vez de recortar uma chapa dentro dela; é a mesma escolha já feita nos
+  gráficos plotly. É o modo do que vai ao ar.
+- `"claro"` (padrão) — superfície clara explícita, para impressão, slide e PDF.
+  **Não** é transparente de propósito: tinta escura sobre transparente seria
+  ilegível justamente na página escura em que os artigos vivem.
+
+O padrão continua `"claro"` porque virá-lo restilizaria de uma vez todos os
+artigos ainda não congelados, deixando o site com dois estilos ao mesmo tempo.
+Passar ao escuro é decisão de publicação de cada projeto — ver a última seção.
 
 E a regra que dá sentido ao pacote: **não reimplemente o layout dentro do
 projeto.** Foi exatamente assim que os três divergiram. Mudou o estilo? Muda
@@ -165,11 +270,13 @@ tabela_amb <- tabela_gt    # anuario-mineral-brasileiro
 E constrói o tema de ggplot **sobre** a paleta, em vez de repetir hexadecimais:
 
 ```r
-tema_projeto <- function() {
+tema_projeto <- function(modo = "escuro") {
   ggplot2::theme_minimal() +
     ggplot2::theme(
-      text       = ggplot2::element_text(colour = tinta("media")),
-      panel.grid = ggplot2::element_line(colour = tinta("grade"))
+      text        = ggplot2::element_text(colour = tinta("media", modo = modo)),
+      panel.grid  = ggplot2::element_line(colour = tinta("grade", modo = modo)),
+      plot.background = ggplot2::element_rect(fill  = tinta("fundo", modo = modo),
+                                              colour = NA)
     )
 }
 ```
@@ -187,8 +294,12 @@ duplicação, só a move.
 acende no hover, o que o tooltip mostra. Isso é desenho de interação, não
 identidade visual.
 
+**Tipografia, espaçamento e forma.** O `site()` traz só cor. Raio zero, sombra
+zero e a escala de espaçamento vivem no CSS do site, onde são aplicáveis; do
+lado do R não teriam uso.
+
 A fronteira do pacote é essa: **o que era idêntico entre projetos entra; o que
-diverge por razão legítima fica fora.**
+diverge por razão legítima, ou não tem uso do lado do R, fica fora.**
 
 ## O risco que sobra: divergir no tempo
 

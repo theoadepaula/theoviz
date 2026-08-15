@@ -49,8 +49,12 @@ test_that("nenhuma cor de serie colide com outra", {
 # --- modo escuro -----------------------------------------------------------
 # Mesma logica dos testes acima: os valores ficam travados para que troca-los
 # exija tocar no teste, e portanto revalidar. Medidos em 2026-07-19 com o
-# validador do skill `dataviz`, contra a superficie #1a1a19: pior par adjacente
-# DeltaE 13,0 (deutan); os quatro slots acima de 3:1 de contraste.
+# validador do skill `dataviz`: pior par adjacente DeltaE 13,0 (deutan).
+#
+# O chao mudou em 2026-08-09 (#1a1a19 -> #0d1014) e as cores de serie NAO
+# mudaram junto, porque nao precisavam: DeltaE entre elas nao depende do fundo, e
+# o contraste contra o fundo so melhorou. Quem confere isso e o test-site.R, que
+# recalcula os contrastes contra o chao novo em vez de confiar no comentario.
 
 test_that("as cores de serie do modo escuro sao exatamente as validadas", {
   expect_identical(
@@ -74,17 +78,41 @@ test_that("modo escuro respeita n, na ordem", {
   expect_identical(paleta(2, modo = "escuro"), c(s1 = "#3987e5", s2 = "#008300"))
 })
 
-test_that("as tintas do modo escuro sao as validadas", {
+test_that("as tintas do modo escuro sao os tokens do site", {
+  # Rebaseadas na 0.3.0. Eram cinzas QUENTES herdados do sistema visual anterior
+  # do site (#c3c2b7, #898781, #2c2c2a); o Boletim e um sistema FRIO. Cinza
+  # quente sobre pagina fria nao le como neutro discreto -- le como figura
+  # recortada de outro documento.
   expect_identical(
     tinta(modo = "escuro"),
-    c(forte = "#ffffff", media = "#c3c2b7", fraca = "#898781",
-      grade = "#2c2c2a", eixo = "#383835", fundo = "#1a1a19")
+    c(forte = "#dde1e6", media = "#a9b0b8", fraca = "#7d858e",
+      grade = "#2c333c", eixo = "#2c333c", fundo = "#0d1014")
   )
-  expect_identical(tinta("fundo", modo = "escuro"), "#1a1a19")
+  expect_identical(tinta("fundo", modo = "escuro"), site("noite"))
 })
 
-test_that("a tinta fraca e a mesma nos dois modos, de proposito", {
-  expect_identical(tinta("fraca"), tinta("fraca", modo = "escuro"))
+test_that("cada tinta escura aponta para o token do site correspondente", {
+  # Se alguem redigitar um hexadecimal aqui em vez de consumir o site(), este
+  # teste quebra -- que e o unico jeito de a fonte unica continuar unica.
+  expect_identical(tinta("forte", modo = "escuro"), site("titulo"))
+  expect_identical(tinta("media", modo = "escuro"), site("leitura"))
+  expect_identical(tinta("fraca", modo = "escuro"), site("rotulo"))
+  expect_identical(tinta("grade", modo = "escuro"), site("filete"))
+  expect_identical(tinta("eixo",  modo = "escuro"), site("filete"))
+})
+
+test_that("no modo escuro o site usa o mesmo filete para grade e eixo", {
+  expect_identical(tinta("grade", modo = "escuro"),
+                   tinta("eixo",  modo = "escuro"))
+  # no claro eles seguem distintos -- o modo claro nao foi rebaseado
+  expect_false(identical(tinta("grade"), tinta("eixo")))
+})
+
+test_that("a tinta fraca deixou de ser a mesma nos dois modos", {
+  # Era, ate a 0.2.0: #898781 servia claro e escuro. O Boletim tem um piso
+  # proprio (#7d858e, o `rotulo`), medido contra o fundo E contra a chapa, e
+  # seguir com o cinza quente era ignorar essa medicao.
+  expect_false(identical(tinta("fraca"), tinta("fraca", modo = "escuro")))
 })
 
 test_that("modo desconhecido e rejeitado", {

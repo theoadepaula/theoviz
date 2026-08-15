@@ -20,3 +20,9 @@ O \code{gt_tbl} com as colunas formatadas.
 Atalho para \code{gt::fmt_number()} com separador de milhar ponto e decimal
 virgula, que e o que os artigos usam em toda tabela.
 }
+\examples{
+fmt_br(tabela_gt(head(mtcars[, 1:3])), disp, decimais = 1)
+}
+\seealso{
+\code{\link[=tabela_gt]{tabela_gt()}}, \code{\link[=num_br]{num_br()}}.
+}

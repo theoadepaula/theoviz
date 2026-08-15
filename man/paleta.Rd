@@ -19,8 +19,42 @@ Vetor nomeado de cores em hexadecimal.
 \description{
 Os quatro slots categoricos da paleta, na ordem validada.
 }
+\section{Uma serie so nao usa a paleta}{
+
+
+Grafico de \strong{uma} serie usa \code{\link[=acento]{acento()}}, o areia do site. A paleta comeca a
+valer em \strong{duas}. Ver a regra inteira em \code{\link[=acento]{acento()}}.
+}
+
+\section{A ordem dos slots faz parte da validacao}{
+
+
+Usar \code{s1} e \code{s3} num grafico de duas series e seguro; trocar \code{s2} por uma cor
+"parecida" nao e. Ha teste travando os valores exatos -- mudar um exige mudar
+o teste tambem, para que a troca seja deliberada e revalidada.
+
+Nunca cicle a paleta. Uma quinta serie vira facetas ou "outros", nao uma cor
+nova.
+}
+
+\section{Contraste contra o fundo}{
+
+
+No modo \strong{escuro}, os quatro passam de 3:1 contra o chao do site
+(\verb{#0d1014}): 5,24 / 3,86 / 4,83 / 6,21. E tambem contra a chapa elevada
+(\verb{#141920}), que e o pior caso de um grafico dentro de cartao: 4,85 / 3,57 /
+4,47 / 5,75. Medido em 2026-08-13.
+
+No modo \strong{claro} dois slots ficam abaixo do piso -- \code{s3} em 2,62 e \code{s4} em
+2,11 sobre \verb{#fcfcfb}. E dessa falha que nasce a regra do rotulo direto, e por
+isso ela vale nos dois modos: identidade de serie nunca depende so de cor.
+}
+
 \examples{
 paleta()                    # os quatro, modo claro
 paleta(2)                   # so os dois primeiros: azul e verde
 paleta(modo = "escuro")     # os quatro passos do modo escuro
+}
+\seealso{
+\code{\link[=acento]{acento()}} para o caso de uma serie so; \code{\link[=tinta]{tinta()}} para os neutros.
 }

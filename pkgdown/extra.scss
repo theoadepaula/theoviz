@@ -1,0 +1,55 @@
+// Ajustes que o bslib nao alcanca sozinho ------------------------------------
+//
+// O tema do `_pkgdown.yml` resolve superficie, acento, fonte e forma. Sobram
+// tres coisas que o pkgdown pinta na sua propria folha, depois do bslib, e que
+// so cedem a uma regra explicita.
+//
+// A primeira e a mais constrangedora: sem isto, os blocos de codigo saem com
+// FUNDO QUASE BRANCO -- a mesma caixa branca sobre pagina escura que esta versao
+// do pacote existe para corrigir nas tabelas `gt`. Publicar a documentacao da
+// correcao exibindo o defeito corrigido seria uma ironia cara.
+
+// 1. Codigo: a chapa do site, nao o cinza claro do pkgdown ---------------------
+
+pre,
+div.sourceCode,
+pre.sourceCode,
+.sourceCode pre {
+  background-color: #141920;   // token `chapa`
+  border: 1px solid #1e242c;   // token `divisa`
+  border-radius: 0;
+  color: #dde1e6;              // token `titulo`
+}
+
+// Codigo dentro de paragrafo: sem chapa, so a voz da medida.
+// (Regra das Duas Vozes: sans e discurso, mono e medida.)
+code {
+  background-color: transparent;
+  color: #dde1e6;
+}
+
+// 2. Nome de funcao dentro de link volta ao acento -----------------------------
+//
+// No indice de referencia o nome da funcao e um <a> com <code> dentro, e o
+// <code> acima levaria a cor do texto. O acento do site vale mais aqui: e o
+// unico elemento clicavel da lista.
+
+a > code,
+a:hover > code {
+  color: inherit;
+}
+
+// 3. Realce de sintaxe sobre fundo escuro --------------------------------------
+//
+// O highlight padrao do pkgdown foi calibrado para fundo claro; sobre a chapa,
+// varias classes caem abaixo do piso de leitura. Estes valores saem da paleta e
+// dos tokens do site, e nao de um tema de editor.
+
+.sourceCode {
+  .co, .cm { color: #7d858e; font-style: italic; }  // comentario: token `rotulo`
+  .st, .ch { color: #7fb08a; }                      // string:     token `ok`
+  .fu     { color: #e3c88d; }                       // funcao:     areia claro
+  .kw, .cf { color: #d08a7a; }                      // palavra-chave: token `err`
+  .dv, .fl, .bn { color: #3987e5; }                 // numero:     paleta s1
+  .op, .sc { color: #a9b0b8; }                      // operador:   token `leitura`
+}

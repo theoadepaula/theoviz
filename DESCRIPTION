@@ -1,15 +1,15 @@
 Package: theoviz
 Title: Identidade Visual dos Artigos de Dados Abertos
-Version: 0.2.0
+Version: 0.3.0
 Authors@R:
     person("Theo", "Albuquerque de Paula",
            email = "theophd@gmail.com",
            role = c("aut", "cre"))
-Description: Paleta validada para daltonismo, tema canonico das tabelas 'gt' e
-    formatacao numerica em portugues do Brasil, compartilhados pelos projetos
-    de dados abertos publicados em theoalbuquerque.com.br. Existe para que os
-    artigos de projetos diferentes leiam como um sistema so, em vez de
-    divergirem por copia.
+Description: Paleta validada para daltonismo, tokens do sistema visual do site,
+    tema canonico das tabelas 'gt' e formatacao numerica em portugues do Brasil,
+    compartilhados pelos projetos de dados abertos publicados em
+    theoalbuquerque.com.br. Existe para que os artigos de projetos diferentes
+    leiam como um sistema so, em vez de divergirem por copia.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Language: pt-BR
@@ -18,12 +18,16 @@ Depends:
 Imports:
     gt
 Suggests:
+    jsonlite,
     knitr,
+    pkgdown,
     rmarkdown,
-    testthat (>= 3.0.0)
+    testthat (>= 3.0.0),
+    webshot2
 VignetteBuilder: knitr
 Config/testthat/edition: 3
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
-URL: https://github.com/theoadepaula/theoviz
+URL: https://theoadepaula.github.io/theoviz/,
+    https://github.com/theoadepaula/theoviz
 BugReports: https://github.com/theoadepaula/theoviz/issues

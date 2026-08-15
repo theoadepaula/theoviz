@@ -1,0 +1,116 @@
+# Site de documentacao ------------------------------------------------------
+#
+# Construido pelo GitHub Actions (.github/workflows/pkgdown.yaml) e publicado
+# em gh-pages. O `docs/` NAO e versionado -- HTML gerado nao entra no repo.
+#
+# Para conferir localmente:
+#   pkgdown::build_site()      # escreve em docs/, que o .gitignore cobre
+#
+# POR QUE O TEMA E ESCURO E CRAVADO A MAO -----------------------------------
+#
+# O bootswatch escuro que o pkgdown oferece e "darkly" -- azul-acinzentado, raio
+# arredondado, sombra. E o vocabulario do sistema visual ANTERIOR do site, o que
+# seria uma ironia particularmente ruim numa versao cujo assunto e justamente
+# ter saido dele. Os valores abaixo sao os mesmos tokens de `site()`: fundo
+# #0d1014, acento areia unico, IBM Plex Sans + Mono, raio zero, sombra zero.
+#
+# Este bloco e mais uma copia dos tokens do site -- a segunda, depois de
+# `R/site.R`. Diferente daquela, esta nao tem teste que a confira: nao ha como
+# um teste de R ler YAML de tema e dizer se a pagina ficou certa. Se um token
+# mudar, `R/site.R` quebra no teste de deriva e ESTE arquivo nao. Por isso ele
+# consome o minimo possivel -- so o que o bslib nao consegue derivar sozinho.
+
+url: https://theoadepaula.github.io/theoviz/
+
+# O pkgdown traduz a moldura (navbar, busca, rodape) e tem catalogo `pt`. Sem
+# isto, um pacote inteiramente em portugues sai com "Get started", "Changelog" e
+# "Developed by" em volta.
+lang: pt
+
+template:
+  bootstrap: 5
+  math-rendering: mathjax
+  bslib:
+    # superficies e texto -- tokens `noite`, `chapa`, `filete`, `leitura`
+    bg: "#0d1014"
+    fg: "#a9b0b8"
+    # acento unico: o areia. Passa nos dois sentidos (9,03:1 sobre o fundo),
+    # que e o que permite usar o mesmo valor em link e em superficie.
+    primary: "#cfae72"
+    link-color: "#cfae72"
+    link-hover-color: "#e3c88d"
+    border-color: "#2c333c"
+    # tipografia: a Regra das Duas Vozes. Sans e discurso, mono e medida.
+    base_font: {google: "IBM Plex Sans"}
+    heading_font: {google: "IBM Plex Sans"}
+    code_font: {google: "IBM Plex Mono"}
+    # forma: raio zero e sombra zero. O sistema do site nao arredonda nada.
+    border-radius: "0"
+    btn-border-radius: "0"
+    box-shadow: "none"
+    code-color: "#dde1e6"
+    pre-bg: "#141920"
+    headings-color: "#dde1e6"
+
+navbar:
+  structure:
+    left:  [intro, reference, articles, news]
+    right: [search, github]
+
+home:
+  title: theoviz — identidade visual dos artigos de dados abertos
+  description: >
+    Paleta validada para daltonismo, tokens do sistema visual do site, tema
+    canônico das tabelas gt e formatação numérica em pt-BR.
+  links:
+  - text: Site onde isto vai ao ar
+    href: https://theoalbuquerque.com.br
+
+# A ordem dos grupos abaixo e a ordem em que se decide uma figura: primeiro em
+# que pagina ela cai (site), depois de que cor ela e (paleta), depois como a
+# tabela se veste, e por fim como o numero se escreve.
+reference:
+- title: O sistema visual do site
+  desc: >
+    Os tokens da direção "Boletim Técnico", adotada pelo site em 2026-08-09.
+    Existem para que um gráfico ou painel feito em R pouse na página sem que
+    ninguém tenha de redigitar um hexadecimal.
+  contents:
+  - site
+  - acento
+
+- title: Paleta
+  desc: >
+    As cores de série, validadas para daltonismo, e as tintas neutras que
+    desenham a estrutura da figura. A ordem dos slots faz parte da validação.
+  contents:
+  - paleta
+  - tinta
+  - grade_rgba
+
+- title: Tabelas
+  desc: >
+    O tema canônico das tabelas gt — régua horizontal apenas, cabeçalho discreto
+    à esquerda, nenhuma linha vertical. Escolha o modo pela página em que a
+    tabela vai cair.
+  contents:
+  - tabela_gt
+  - fmt_br
+  - fmt_pct_br
+
+- title: Números em pt-BR
+  desc: Milhar com ponto, decimal com vírgula.
+  contents:
+  - num_br
+  - pct_br
+  - mil
+
+- title: O pacote
+  contents:
+  - theoviz-package
+
+articles:
+- title: Guia
+  navbar: ~
+  contents:
+  - theoviz

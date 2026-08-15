@@ -18,8 +18,51 @@ Vetor nomeado de cores em hexadecimal.
 Cinzas de texto, grade e fundo. Separados das cores de serie porque nunca
 codificam dado -- so estrutura.
 }
+\section{O site nao tem modo claro}{
+
+
+O padrao continua sendo \code{"claro"}, e isso e deliberado: trocar o padrao
+restilizaria de uma vez artigos ja congelados por \code{freeze}, e o site passaria
+a exibir dois estilos ao mesmo tempo. \strong{Mas o site e escuro por definicao} --
+um grafico que vai ao ar quer \code{modo = "escuro"}.
+
+A troca e uma decisao de publicacao, tomada em cada projeto junto com um
+\verb{quarto render quarto --no-freeze}. O modo claro segue util fora do site:
+impressao, slide, PDF.
+}
+
+\section{De onde vem cada modo}{
+
+
+No \strong{modo escuro}, desde a 0.3.0, as tintas \emph{sao} os tokens do site -- ver
+\code{\link[=site]{site()}}. Antes eram cinzas quentes herdados do sistema visual anterior, e o
+Boletim e um sistema frio; cinza quente sobre pagina fria nao le como neutro
+discreto, le como figura recortada de outro documento.
+
+\tabular{llll}{
+\strong{tinta} \tab \strong{0.2.0} \tab \strong{0.3.0} \tab \strong{token do site} \cr
+\code{forte}   \tab \verb{#ffffff} \tab \verb{#dde1e6} \tab \code{titulo}   \cr
+\code{media}   \tab \verb{#c3c2b7} \tab \verb{#a9b0b8} \tab \code{leitura}  \cr
+\code{fraca}   \tab \verb{#898781} \tab \verb{#7d858e} \tab \code{rotulo}   \cr
+\code{grade}   \tab \verb{#2c2c2a} \tab \verb{#2c333c} \tab \code{filete}   \cr
+\code{eixo}    \tab \verb{#383835} \tab \verb{#2c333c} \tab \code{filete}   \cr
+\code{fundo}   \tab \verb{#1a1a19} \tab \verb{#0d1014} \tab \code{noite}
+}
+
+Duas notas sobre a tabela. O \code{forte} deixou de ser branco puro porque o site
+o proibe sobre este fundo, com razao especifica: ele vibra. E \code{grade} e \code{eixo}
+passaram a ser \strong{o mesmo valor}, porque o site usa um filete so para as duas
+coisas -- os dois nomes seguem existindo para nao quebrar quem ja os chama.
+
+O \strong{modo claro nao foi rebaseado}, e nao havia como: o site nao tem
+superficie clara contra a qual validar. Ele guarda a referencia \verb{#fcfcfb}.
+}
+
 \examples{
 tinta()
 tinta("grade")
-tinta("fundo", modo = "escuro")
+tinta("fundo", modo = "escuro")   # o chao do site
+}
+\seealso{
+\code{\link[=site]{site()}} para o conjunto completo de tokens do site.
 }

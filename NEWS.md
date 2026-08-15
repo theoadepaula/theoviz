@@ -1,3 +1,168 @@
+# theoviz 0.3.0
+
+**O pacote passa a acompanhar o sistema visual do site.**
+
+Em 2026-08-09 o site trocou de direção visual: saiu *"A Sala de Leitura
+Noturna"* (fundo `#0f172a`, acento azul `#0085ff`, Inter, raio 0,5rem, sombra no
+hover) e entrou **"O Boletim Técnico"** — fundo quase preto, acento areia único,
+IBM Plex Sans + Mono, raio zero, sombra zero.
+
+O `theoviz` seguia calibrado para o sistema aposentado. Esta versão fecha essa
+distância.
+
+## 🔴 Correção: a tabela branca no meio da página escura
+
+`tabela_gt()` **não dizia uma cor sequer**. Parecia elegância — "a tabela herda
+a página" — e era o oposto: o `gt` não herda nada. Sem instrução ele crava
+`background-color: #FFFFFF` com texto `#333333`, *inline*, e nenhum
+`custom.scss` derruba estilo inline.
+
+Como toda página do site é escura, **toda tabela de todo artigo ia ao ar como um
+retângulo branco no meio do texto.**
+
+```r
+tabela_gt(dados, modo = "escuro")   # novo argumento
+```
+
+- `"escuro"` — fundo **transparente** e tintas do site. A tabela pousa na página
+  em vez de recortar uma chapa dentro dela. É a mesma escolha já feita nos
+  gráficos plotly do SLU (`paper_bgcolor = "rgba(0,0,0,0)"`), pelo mesmo motivo.
+- `"claro"` (padrão) — superfície clara explícita, para impressão, slide e PDF.
+  **Não** é transparente de propósito: tinta escura sobre transparente seria
+  ilegível justamente na página escura em que os artigos vivem.
+
+Há teste garantindo que `#FFFFFF` e `#333333` não voltam calados.
+
+## Novo: `site()` e `acento()`
+
+Os tokens de cor da direção "Boletim Técnico", espelhados do bloco `@theme` de
+`src/styles/global.css`.
+
+```r
+site("noite")    #> "#0d1014"   -- o chão da página
+site("filete")   #> "#2c333c"   -- grade e base de eixo
+acento()         #> "#cfae72"   -- o areia, único acento do sistema
+```
+
+**Sim, isto é uma cópia** — e cópia é o que este pacote existe para eliminar. A
+diferença é que agora há **uma**, datada, com a fonte escrita, e um teste que a
+confere contra o CSS do site quando o repo está na máquina. Antes havia três, e
+cada projeto inventava o seu próprio cinza: o `relatorios-slu` chegou a cravar
+`TINTA_2 <- "#8a8a85"` com o comentário *"não é o `tinta('fraca')` do
+theoviz"*. Era esse o sintoma.
+
+**A regra que `acento()` carrega:** uma série usa o acento; duas ou mais usam
+`paleta()`, na ordem dos slots. O areia **não entra na paleta categórica** —
+não foi validado para daltonismo contra os quatro slots, e o sistema do site o
+reserva para ação e estado ativo. Não há meio-termo: três séries com uma delas
+em areia mistura dois vocabulários.
+
+Fica de fora tipografia, espaçamento e forma. Isso é do CSS do site e não tem
+uso do lado do R.
+
+## As tintas do modo escuro foram rebaseadas
+
+Eram cinzas **quentes** herdados do sistema anterior. O Boletim é um sistema
+**frio**, e cinza quente sobre página fria não lê como neutro discreto — lê como
+figura recortada de outro documento.
+
+| tinta | antes | agora | token do site |
+|---|---|---|---|
+| `forte` | `#ffffff` | `#dde1e6` | `titulo` |
+| `media` | `#c3c2b7` | `#a9b0b8` | `leitura` |
+| `fraca` | `#898781` | `#7d858e` | `rotulo` |
+| `grade` | `#2c2c2a` | `#2c333c` | `filete` |
+| `eixo` | `#383835` | `#2c333c` | `filete` |
+| `fundo` | `#1a1a19` | `#0d1014` | `noite` |
+
+⚠️ **`tinta("forte", modo = "escuro")` deixou de ser branco puro.** O site
+proíbe `#ffffff` sobre este fundo por razão específica: ele vibra. Há teste
+cobrando isso.
+
+⚠️ **`tinta("fraca")` deixou de ser a mesma nos dois modos.** Era, até a 0.2.0:
+`#898781` servia claro e escuro. O Boletim tem um piso próprio, medido contra o
+fundo e contra a chapa.
+
+⚠️ **`grade` e `eixo` agora são o mesmo valor no escuro.** O site usa um filete
+só para os dois. No modo claro seguem distintos — o claro não foi rebaseado.
+
+`grade_rgba()` continua existindo, com o papel redefinido: é o recurso de **chão
+desconhecido**, para quando a figura não sabe sobre o que vai pousar. Sabendo,
+prefira a grade sólida.
+
+## ✅ As cores de série não mudaram
+
+O resultado limpo desta versão. ΔE entre as cores não depende do fundo, e o
+contraste contra o chão só **melhorou** — `#0d1014` é mais escuro que o
+`#1a1a19` de antes:
+
+| | `s1` | `s2` | `s3` | `s4` |
+|---|---|---|---|---|
+| contraste vs `#0d1014` | 5,24 | 3,86 | 4,83 | 6,21 |
+| contraste vs `#141920` (chapa) | 4,85 | 3,57 | 4,47 | 5,75 |
+
+Os quatro passam de 3:1 sobre as duas superfícies. **Nenhum projeto precisa
+mexer numa linha por causa disso.**
+
+## Coluna numérica sai em mono
+
+> "Sans é discurso, Mono é medida. A fronteira é semântica, não estética."
+> — a Regra das Duas Vozes, `DESIGN.md` do site
+
+`tabela_gt()` aplica IBM Plex Mono às colunas numéricas e IBM Plex Sans ao
+resto. O `tabular-nums` já estava aqui desde a 0.1.0 e resolvia metade do
+problema — alinhava os algarismos, mas deixava o número na voz da prosa.
+
+## Contraste recalculado, não transcrito
+
+Até a 0.2.0 os números de contraste viviam em comentário e no README: medições
+feitas uma vez, com ferramenta de fora, depois transcritas. Isso funciona até a
+primeira vez que alguém troca uma cor e esquece de remedir — e o comentário
+passa a mentir com toda a autoridade de um número.
+
+`tests/testthat/helper-contraste.R` implementa a luminância relativa da WCAG
+2.1, e a conta é refeita a cada `R CMD check`. A separação sob daltonismo (ΔE em
+espaço perceptual) continua vindo do validador do skill `dataviz`, registrada
+com data no código.
+
+**Teste de deriva:** `test-site.R` lê o `global.css` do repo do site, quando ele
+está na máquina, e confere os 14 tokens um a um. Cópia envelhece calada; esta
+não.
+
+## Documentação
+
+- **Site pkgdown** — <https://theoadepaula.github.io/theoviz/>, com tema casado
+  com o Boletim (fundo `#0d1014`, acento areia, IBM Plex, raio zero). Construído
+  e publicado pelo workflow `pkgdown.yaml` a cada push na `main`; o `docs/` não
+  é versionado.
+- **Figuras no README** — `data-raw/figuras.R` gera as três imagens a partir dos
+  valores reais do pacote: os hexadecimais e os contrastes que aparecem nelas são
+  calculados na hora, não digitados.
+
+## Recado para quem cuida dos projetos
+
+Esta versão **é retrocompatível no modo claro**: sem argumento, `paleta()`,
+`tinta()` e `tabela_gt()` devolvem exatamente o que devolviam na 0.2.0. Só o
+modo escuro mudou de valores.
+
+O padrão segue `"claro"` de propósito. Virá-lo restilizaria de uma vez todos os
+artigos ainda não congelados e deixaria o site com dois estilos ao mesmo tempo.
+Passar ao escuro é decisão de publicação de cada projeto, tomada junto com
+`quarto render quarto --no-freeze`.
+
+Fica pendente, e não é meu para fazer:
+
+1. **Migrar os três projetos para `modo = "escuro"`**, um de cada vez. Os três
+   hoje chamam `paleta()` e `tinta()` no claro enquanto renderizam em páginas
+   escuras.
+2. **`relatorios-slu`** — apagar o `TINTA_2 <- "#8a8a85"` local e usar
+   `tinta("fraca", modo = "escuro")`.
+3. **`cargos-executivo-federal`** — o `_tema.R` pinta `surface = "#fcfcfb"`,
+   uma superfície quase branca dentro de uma página escura.
+4. **Rodar `quarto render quarto --no-freeze`** no site depois de cada migração.
+
+---
+
 # theoviz 0.2.0
 
 ## Documentação e infraestrutura de pacote
