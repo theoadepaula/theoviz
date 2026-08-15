@@ -84,9 +84,12 @@ Escolha o \code{modo} de \code{\link[=tabela_gt]{tabela_gt()}} pela pagina em qu
 
 O site renderiza os artigos com \code{freeze}, entao um artigo ja congelado \strong{nao}
 re-renderiza quando este pacote muda. Depois de qualquer alteracao que afete
-layout, suba a versao e rode uma vez, no repo do site:
-\verb{quarto render quarto --no-freeze}. Sem isso o site exibe dois estilos ao
-mesmo tempo.
+layout, suba a versao e rode uma vez, no repo do site: apague
+\verb{quarto/_freeze/} e rode \verb{npm run build:quarto}. Sem isso o site exibe dois
+estilos ao mesmo tempo.
+
+Nao use \verb{quarto render quarto --no-freeze}: essa opcao nao existe no Quarto
+1.9 e o render falha inteiro. Quem invalida o cache e apagar o \verb{_freeze}.
 }
 
 \seealso{

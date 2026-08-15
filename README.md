@@ -226,8 +226,8 @@ que `paleta()` e `tabela_gt()` seguem devolvendo o claro sem argumento?
 Porque virar o padrão restilizaria **de uma vez** todos os artigos que ainda
 não foram congelados, e deixaria o site com dois estilos ao mesmo tempo — os
 novos escuros, os antigos claros. Passar ao escuro é uma decisão *de publicação*
-de cada projeto, tomada junto com `quarto render quarto --no-freeze`, e não um
-efeito colateral de atualizar um pacote.
+de cada projeto, tomada junto com um re-render completo do site (ver abaixo), e
+não um efeito colateral de atualizar um pacote.
 
 ## O que deliberadamente **não** tem
 
@@ -271,8 +271,16 @@ A cura: a cada mudança que afete layout, subir a versão no `DESCRIPTION` e rod
 uma vez, no repo do site:
 
 ```bash
-quarto render quarto --no-freeze
+rm -rf quarto/_freeze      # sem apagar, o freeze devolve a execução antiga
+npm run build:quarto
 ```
+
+> ⚠️ **Não use `quarto render quarto --no-freeze`.** Essa opção não existe no
+> Quarto 1.9 — ela é repassada ao pandoc, que responde `Unknown option` e o
+> render falha inteiro. Era o comando documentado aqui até 2026-08-15, e o
+> erro só aparece quando alguém tenta usá-lo. Apagar o `_freeze` é o que
+> invalida o cache; `build:quarto` ainda encadeia a poda das fontes do ggiraph
+> e o sync para o Astro, que um `quarto render` cru deixaria de fora.
 
 É o problema antigo com outro eixo. Antes, três cópias divergiam no espaço;
 agora, uma fonte só pode divergir no tempo.

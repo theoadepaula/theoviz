@@ -27,8 +27,9 @@ a exibir dois estilos ao mesmo tempo. \strong{Mas o site e escuro por definicao}
 um grafico que vai ao ar quer \code{modo = "escuro"}.
 
 A troca e uma decisao de publicacao, tomada em cada projeto junto com um
-\verb{quarto render quarto --no-freeze}. O modo claro segue util fora do site:
-impressao, slide, PDF.
+re-render completo do site (apagar \verb{quarto/_freeze/} e rodar
+\verb{npm run build:quarto}). O modo claro segue util fora do site: impressao,
+slide, PDF.
 }
 
 \section{De onde vem cada modo}{

@@ -75,8 +75,9 @@
 # Trocar o padrao restilizaria, de uma vez, artigos que ja estao congelados por
 # `freeze` -- e o site passaria a exibir dois estilos ao mesmo tempo, que e
 # justamente o risco descrito em ?theoviz. A troca do padrao e uma decisao de
-# publicacao, nao de pacote: ela se faz em cada projeto, junto com um
-# `quarto render --no-freeze`.
+# publicacao, nao de pacote: ela se faz em cada projeto, junto com um re-render
+# completo do site -- apagar `quarto/_freeze/` e rodar `npm run build:quarto`.
+# (E `--no-freeze`, nao: essa opcao nao existe no Quarto 1.9.)
 #
 # O que o pacote faz e deixar o caminho certo curto: `modo = "escuro"` devolve
 # os tokens do site, sem que ninguem precise redigitar um hexadecimal.
@@ -153,8 +154,9 @@ paleta <- function(n = 4, modo = c("claro", "escuro")) {
 #' um grafico que vai ao ar quer `modo = "escuro"`.
 #'
 #' A troca e uma decisao de publicacao, tomada em cada projeto junto com um
-#' `quarto render quarto --no-freeze`. O modo claro segue util fora do site:
-#' impressao, slide, PDF.
+#' re-render completo do site (apagar `quarto/_freeze/` e rodar
+#' `npm run build:quarto`). O modo claro segue util fora do site: impressao,
+#' slide, PDF.
 #'
 #' @section De onde vem cada modo:
 #'
