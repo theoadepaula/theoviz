@@ -1,0 +1,9 @@
+pandoc: 3.8.3
+pkgdown: 2.2.1
+pkgdown_sha: ~
+articles:
+  theoviz: theoviz.html
+last_built: 2026-08-15T22:19Z
+urls:
+  reference: https://theoadepaula.github.io/theoviz/reference
+  article: https://theoadepaula.github.io/theoviz/articles
