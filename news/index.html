@@ -13,7 +13,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">theoviz</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -40,6 +40,23 @@
     </div>
 
     <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.3.1" id="theoviz-031">theoviz 0.3.1<a class="anchor" aria-label="anchor" href="#theoviz-031"></a></h2>
+<p>Correção de documentação. Nenhuma mudança de comportamento.</p>
+<div class="section level3">
+<h3 id="o-comando-que-este-pacote-mandava-rodar-não-existe-0-3-1">O comando que este pacote mandava rodar não existe<a class="anchor" aria-label="anchor" href="#o-comando-que-este-pacote-mandava-rodar-n%C3%A3o-existe-0-3-1"></a></h3>
+<p>A 0.3.0 mandava rodar <code>quarto render quarto --no-freeze</code> depois de qualquer mudança de layout — em nove lugares: README, NEWS, <code><a href="../reference/theoviz-package.html">?theoviz</a></code>, <code><a href="../reference/tinta.html">?tinta</a></code>, comentários de <code>R/paleta.R</code> e a vignette.</p>
+<p><strong>Essa opção não existe no Quarto 1.9.</strong> Ela é repassada ao pandoc, que responde <code>Unknown option --no-freeze</code>, e o render do projeto inteiro falha. Descoberto em 2026-08-15, ao migrar de fato os três projetos para o modo escuro — que foi a primeira vez que alguém executou a instrução.</p>
+<p>O caminho que funciona, no repo do site:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">rm</span> <span class="at">-rf</span> quarto/_freeze      <span class="co"># é apagar o cache que invalida a execução</span></span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="ex">npm</span> run build:quarto</span></code></pre></div>
+<p><code>build:quarto</code> não é enfeite sobre <code>quarto render</code>: ele encadeia a poda das fontes do ggiraph — 326 MB numa execução medida — e o sync para o Astro. Um <code>quarto render</code> cru deixa os dois de fora.</p>
+</div>
+<div class="section level3">
+<h3 id="a-migração-pendente-na-foi-feita-0-3-1">A migração pendente na 0.3.0 foi feita<a class="anchor" aria-label="anchor" href="#a-migra%C3%A7%C3%A3o-pendente-na-foi-feita-0-3-1"></a></h3>
+<p>Os três itens que a 0.3.0 listou como “não é meu para fazer” foram executados nos repos dos projetos, em 2026-08-15: <code>cargos-executivo-federal</code>, <code>relatorios-slu</code> e <code>anuario-mineral-brasileiro</code> passaram a pedir <code>modo = "escuro"</code>, o <code>TINTA_2 &lt;- "#8a8a85"</code> do SLU foi removido, e os 14 artigos que esta máquina consegue executar foram re-renderizados.</p>
+<hr></div>
+</div>
+    <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.3.0" id="theoviz-030">theoviz 0.3.0<a class="anchor" aria-label="anchor" href="#theoviz-030"></a></h2>
 <p><strong>O pacote passa a acompanhar o sistema visual do site.</strong></p>
 <p>Em 2026-08-09 o site trocou de direção visual: saiu <em>“A Sala de Leitura Noturna”</em> (fundo <code>#0f172a</code>, acento azul <code>#0085ff</code>, Inter, raio 0,5rem, sombra no hover) e entrou <strong>“O Boletim Técnico”</strong> — fundo quase preto, acento areia único, IBM Plex Sans + Mono, raio zero, sombra zero.</p>
@@ -48,7 +65,7 @@
 <h3 id="red_circle-correção-a-tabela-branca-no-meio-da-página-escura-0-3-0">🔴 Correção: a tabela branca no meio da página escura<a class="anchor" aria-label="anchor" href="#red_circle-corre%C3%A7%C3%A3o-a-tabela-branca-no-meio-da-p%C3%A1gina-escura-0-3-0"></a></h3>
 <p><code><a href="../reference/tabela_gt.html">tabela_gt()</a></code> <strong>não dizia uma cor sequer</strong>. Parecia elegância — “a tabela herda a página” — e era o oposto: o <code>gt</code> não herda nada. Sem instrução ele crava <code>background-color: #FFFFFF</code> com texto <code>#333333</code>, <em>inline</em>, e nenhum <code>custom.scss</code> derruba estilo inline.</p>
 <p>Como toda página do site é escura, <strong>toda tabela de todo artigo ia ao ar como um retângulo branco no meio do texto.</strong></p>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/tabela_gt.html">tabela_gt</a></span><span class="op">(</span><span class="va">dados</span>, modo <span class="op">=</span> <span class="st">"escuro"</span><span class="op">)</span>   <span class="co"># novo argumento</span></span></code></pre></div>
 <ul><li>
 <code>"escuro"</code> — fundo <strong>transparente</strong> e tintas do site. A tabela pousa na página em vez de recortar uma chapa dentro dela. É a mesma escolha já feita nos gráficos plotly do SLU (<code>paper_bgcolor = "rgba(0,0,0,0)"</code>), pelo mesmo motivo.</li>
@@ -60,7 +77,7 @@
 <h3 id="novo-site-e-acento-0-3-0">Novo: <code>site()</code> e <code>acento()</code>
 <a class="anchor" aria-label="anchor" href="#novo-site-e-acento-0-3-0"></a></h3>
 <p>Os tokens de cor da direção “Boletim Técnico”, espelhados do bloco <code>@theme</code> de <code>src/styles/global.css</code>.</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/site.html">site</a></span><span class="op">(</span><span class="st">"noite"</span><span class="op">)</span>    <span class="co">#&gt; "#0d1014"   -- o chão da página</span></span>
 <span><span class="fu"><a href="../reference/site.html">site</a></span><span class="op">(</span><span class="st">"filete"</span><span class="op">)</span>   <span class="co">#&gt; "#2c333c"   -- grade e base de eixo</span></span>
 <span><span class="fu"><a href="../reference/acento.html">acento</a></span><span class="op">(</span><span class="op">)</span>         <span class="co">#&gt; "#cfae72"   -- o areia, único acento do sistema</span></span></code></pre></div>
@@ -148,7 +165,7 @@
 <div class="section level3">
 <h3 id="recado-para-quem-cuida-dos-projetos-0-3-0">Recado para quem cuida dos projetos<a class="anchor" aria-label="anchor" href="#recado-para-quem-cuida-dos-projetos-0-3-0"></a></h3>
 <p>Esta versão <strong>é retrocompatível no modo claro</strong>: sem argumento, <code><a href="../reference/paleta.html">paleta()</a></code>, <code><a href="../reference/tinta.html">tinta()</a></code> e <code><a href="../reference/tabela_gt.html">tabela_gt()</a></code> devolvem exatamente o que devolviam na 0.2.0. Só o modo escuro mudou de valores.</p>
-<p>O padrão segue <code>"claro"</code> de propósito. Virá-lo restilizaria de uma vez todos os artigos ainda não congelados e deixaria o site com dois estilos ao mesmo tempo. Passar ao escuro é decisão de publicação de cada projeto, tomada junto com <code>quarto render quarto --no-freeze</code>.</p>
+<p>O padrão segue <code>"claro"</code> de propósito. Virá-lo restilizaria de uma vez todos os artigos ainda não congelados e deixaria o site com dois estilos ao mesmo tempo. Passar ao escuro é decisão de publicação de cada projeto, tomada junto com apagar <code>quarto/_freeze/</code> e rodar <code>npm run build:quarto</code>.</p>
 <p>Fica pendente, e não é meu para fazer:</p>
 <ol style="list-style-type: decimal"><li>
 <strong>Migrar os três projetos para <code>modo = "escuro"</code></strong>, um de cada vez. Os três hoje chamam <code><a href="../reference/paleta.html">paleta()</a></code> e <code><a href="../reference/tinta.html">tinta()</a></code> no claro enquanto renderizam em páginas escuras.</li>
@@ -157,7 +174,7 @@
 <li>
 <strong><code>cargos-executivo-federal</code></strong> — o <code>_tema.R</code> pinta <code>surface = "#fcfcfb"</code>, uma superfície quase branca dentro de uma página escura.</li>
 <li>
-<strong>Rodar <code>quarto render quarto --no-freeze</code></strong> no site depois de cada migração.</li>
+<strong>Apagar <code>quarto/_freeze/</code> e rodar <code>npm run build:quarto</code></strong> no site depois de cada migração.</li>
 </ol><hr></div>
 </div>
     <div class="section level2">
@@ -182,7 +199,7 @@
 <div class="section level3">
 <h3 id="modo-escuro-na-paleta-0-2-0">Modo escuro na paleta<a class="anchor" aria-label="anchor" href="#modo-escuro-na-paleta-0-2-0"></a></h3>
 <p><code><a href="../reference/paleta.html">paleta()</a></code> e <code><a href="../reference/tinta.html">tinta()</a></code> agora aceitam <code>modo = "escuro"</code>.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/paleta.html">paleta</a></span><span class="op">(</span>modo <span class="op">=</span> <span class="st">"escuro"</span><span class="op">)</span></span>
 <span><span class="co">#&gt;        s1        s2        s3        s4</span></span>
 <span><span class="co">#&gt; "#3987e5" "#008300" "#d55181" "#c98500"</span></span>
@@ -222,7 +239,7 @@
 <li>
 <strong>Artigos em <code>plot_ly</code></strong> — se algum tema escuro de gráfico repetir esses hexadecimais à mão, agora tem de onde buscá-los.</li>
 <li>
-<strong>Rodar <code>quarto render quarto --no-freeze</code></strong> no site depois de subir a versão, senão artigos já congelados seguem com o estilo antigo. (Já estava no <code>CLAUDE.md</code>; vale lembrar a cada bump.)</li>
+<strong>Apagar <code>quarto/_freeze/</code> e rodar <code>npm run build:quarto</code></strong> no site depois de subir a versão, senão artigos já congelados seguem com o estilo antigo. (Já estava no <code>CLAUDE.md</code>; vale lembrar a cada bump.)</li>
 </ol><p>Nada disso é urgente: a 0.1.0 continua funcionando, e a 0.2.0 não muda nenhum valor existente.</p>
 <hr></div>
 </div>

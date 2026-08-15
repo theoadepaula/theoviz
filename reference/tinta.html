@@ -15,7 +15,7 @@ codificam dado – so estrutura."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">theoviz</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -78,8 +78,9 @@ restilizaria de uma vez artigos ja congelados por <code>freeze</code>, e o site 
 a exibir dois estilos ao mesmo tempo. <strong>Mas o site e escuro por definicao</strong> –
 um grafico que vai ao ar quer <code>modo = "escuro"</code>.</p>
 <p>A troca e uma decisao de publicacao, tomada em cada projeto junto com um
-<code>quarto render quarto --no-freeze</code>. O modo claro segue util fora do site:
-impressao, slide, PDF.</p>
+re-render completo do site (apagar <code>quarto/_freeze/</code> e rodar
+<code>npm run build:quarto</code>). O modo claro segue util fora do site: impressao,
+slide, PDF.</p>
     </div>
     <div class="section level2">
     <h2 id="de-onde-vem-cada-modo">De onde vem cada modo<a class="anchor" aria-label="anchor" href="#de-onde-vem-cada-modo"></a></h2>

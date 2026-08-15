@@ -1,5 +1,44 @@
 # Changelog
 
+## theoviz 0.3.1
+
+Correção de documentação. Nenhuma mudança de comportamento.
+
+### O comando que este pacote mandava rodar não existe
+
+A 0.3.0 mandava rodar `quarto render quarto --no-freeze` depois de
+qualquer mudança de layout — em nove lugares: README, NEWS,
+[`?theoviz`](https://theoadepaula.github.io/theoviz/reference/theoviz-package.md),
+[`?tinta`](https://theoadepaula.github.io/theoviz/reference/tinta.md),
+comentários de `R/paleta.R` e a vignette.
+
+**Essa opção não existe no Quarto 1.9.** Ela é repassada ao pandoc, que
+responde `Unknown option --no-freeze`, e o render do projeto inteiro
+falha. Descoberto em 2026-08-15, ao migrar de fato os três projetos para
+o modo escuro — que foi a primeira vez que alguém executou a instrução.
+
+O caminho que funciona, no repo do site:
+
+``` bash
+rm -rf quarto/_freeze      # é apagar o cache que invalida a execução
+npm run build:quarto
+```
+
+`build:quarto` não é enfeite sobre `quarto render`: ele encadeia a poda
+das fontes do ggiraph — 326 MB numa execução medida — e o sync para o
+Astro. Um `quarto render` cru deixa os dois de fora.
+
+### A migração pendente na 0.3.0 foi feita
+
+Os três itens que a 0.3.0 listou como “não é meu para fazer” foram
+executados nos repos dos projetos, em 2026-08-15:
+`cargos-executivo-federal`, `relatorios-slu` e
+`anuario-mineral-brasileiro` passaram a pedir `modo = "escuro"`, o
+`TINTA_2 <- "#8a8a85"` do SLU foi removido, e os 14 artigos que esta
+máquina consegue executar foram re-renderizados.
+
+------------------------------------------------------------------------
+
 ## theoviz 0.3.0
 
 **O pacote passa a acompanhar o sistema visual do site.**
@@ -166,7 +205,8 @@ valores.
 O padrão segue `"claro"` de propósito. Virá-lo restilizaria de uma vez
 todos os artigos ainda não congelados e deixaria o site com dois estilos
 ao mesmo tempo. Passar ao escuro é decisão de publicação de cada
-projeto, tomada junto com `quarto render quarto --no-freeze`.
+projeto, tomada junto com apagar `quarto/_freeze/` e rodar
+`npm run build:quarto`.
 
 Fica pendente, e não é meu para fazer:
 
@@ -181,8 +221,8 @@ Fica pendente, e não é meu para fazer:
 3.  **`cargos-executivo-federal`** — o `_tema.R` pinta
     `surface = "#fcfcfb"`, uma superfície quase branca dentro de uma
     página escura.
-4.  **Rodar `quarto render quarto --no-freeze`** no site depois de cada
-    migração.
+4.  **Apagar `quarto/_freeze/` e rodar `npm run build:quarto`** no site
+    depois de cada migração.
 
 ------------------------------------------------------------------------
 
@@ -287,9 +327,9 @@ Fica pendente, e não é meu para fazer:
     `paleta(modo = "escuro")` pelo script que monta o painel.
 2.  **Artigos em `plot_ly`** — se algum tema escuro de gráfico repetir
     esses hexadecimais à mão, agora tem de onde buscá-los.
-3.  **Rodar `quarto render quarto --no-freeze`** no site depois de subir
-    a versão, senão artigos já congelados seguem com o estilo antigo.
-    (Já estava no `CLAUDE.md`; vale lembrar a cada bump.)
+3.  **Apagar `quarto/_freeze/` e rodar `npm run build:quarto`** no site
+    depois de subir a versão, senão artigos já congelados seguem com o
+    estilo antigo. (Já estava no `CLAUDE.md`; vale lembrar a cada bump.)
 
 Nada disso é urgente: a 0.1.0 continua funcionando, e a 0.2.0 não muda
 nenhum valor existente.

@@ -32,7 +32,7 @@
 
     <a class="navbar-brand me-2" href="index.html">theoviz</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -222,7 +222,7 @@
 <h2 id="por-que-o-padrão-continua-sendo-o-modo-claro">Por que o padrão continua sendo o modo claro<a class="anchor" aria-label="anchor" href="#por-que-o-padr%C3%A3o-continua-sendo-o-modo-claro"></a>
 </h2>
 <p>Parece contraditório: o site é escuro por definição e nunca teve modo claro. Por que <code><a href="reference/paleta.html">paleta()</a></code> e <code><a href="reference/tabela_gt.html">tabela_gt()</a></code> seguem devolvendo o claro sem argumento?</p>
-<p>Porque virar o padrão restilizaria <strong>de uma vez</strong> todos os artigos que ainda não foram congelados, e deixaria o site com dois estilos ao mesmo tempo — os novos escuros, os antigos claros. Passar ao escuro é uma decisão <em>de publicação</em> de cada projeto, tomada junto com <code>quarto render quarto --no-freeze</code>, e não um efeito colateral de atualizar um pacote.</p>
+<p>Porque virar o padrão restilizaria <strong>de uma vez</strong> todos os artigos que ainda não foram congelados, e deixaria o site com dois estilos ao mesmo tempo — os novos escuros, os antigos claros. Passar ao escuro é uma decisão <em>de publicação</em> de cada projeto, tomada junto com um re-render completo do site (ver abaixo), e não um efeito colateral de atualizar um pacote.</p>
 </div>
 <div class="section level2">
 <h2 id="o-que-deliberadamente-não-tem">O que deliberadamente <strong>não</strong> tem<a class="anchor" aria-label="anchor" href="#o-que-deliberadamente-n%C3%A3o-tem"></a>
@@ -267,7 +267,11 @@
 </h2>
 <p>O site renderiza os artigos com <code>freeze</code>, então <strong>um artigo já congelado não re-renderiza quando este pacote muda</strong>. Uma alteração de layout faria o site exibir dois estilos ao mesmo tempo.</p>
 <p>A cura: a cada mudança que afete layout, subir a versão no <code>DESCRIPTION</code> e rodar uma vez, no repo do site:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="ex">quarto</span> render quarto <span class="at">--no-freeze</span></span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="fu">rm</span> <span class="at">-rf</span> quarto/_freeze      <span class="co"># sem apagar, o freeze devolve a execução antiga</span></span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a><span class="ex">npm</span> run build:quarto</span></code></pre></div>
+<blockquote>
+<p>⚠️ <strong>Não use <code>quarto render quarto --no-freeze</code>.</strong> Essa opção não existe no Quarto 1.9 — ela é repassada ao pandoc, que responde <code>Unknown option</code> e o render falha inteiro. Era o comando documentado aqui até 2026-08-15, e o erro só aparece quando alguém tenta usá-lo. Apagar o <code>_freeze</code> é o que invalida o cache; <code>build:quarto</code> ainda encadeia a poda das fontes do ggiraph e o sync para o Astro, que um <code>quarto render</code> cru deixaria de fora.</p>
+</blockquote>
 <p>É o problema antigo com outro eixo. Antes, três cópias divergiam no espaço; agora, uma fonte só pode divergir no tempo.</p>
 </div>
 <div class="section level2">

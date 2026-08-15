@@ -357,7 +357,8 @@ novo e os antigos com o antigo.
 A cura, a cada mudança que afete layout:
 
 ``` bash
-quarto render quarto --no-freeze
+rm -rf quarto/_freeze      # sem apagar, o freeze devolve a execucao antiga
+npm run build:quarto
 ```
 
 É o problema antigo com outro eixo. Antes, três cópias divergiam no

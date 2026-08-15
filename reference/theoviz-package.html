@@ -13,7 +13,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">theoviz</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -136,9 +136,11 @@ Escolha o <code>modo</code> de <code><a href="tabela_gt.html">tabela_gt()</a></c
 
 <p>O site renderiza os artigos com <code>freeze</code>, entao um artigo ja congelado <strong>nao</strong>
 re-renderiza quando este pacote muda. Depois de qualquer alteracao que afete
-layout, suba a versao e rode uma vez, no repo do site:
-<code>quarto render quarto --no-freeze</code>. Sem isso o site exibe dois estilos ao
-mesmo tempo.</p>
+layout, suba a versao e rode uma vez, no repo do site: apague
+<code>quarto/_freeze/</code> e rode <code>npm run build:quarto</code>. Sem isso o site exibe dois
+estilos ao mesmo tempo.</p>
+<p>Nao use <code>quarto render quarto --no-freeze</code>: essa opcao nao existe no Quarto
+1.9 e o render falha inteiro. Quem invalida o cache e apagar o <code>_freeze</code>.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>

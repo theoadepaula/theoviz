@@ -28,7 +28,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">theoviz</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -952,7 +952,8 @@ congelado <strong>não</strong> re-renderiza quando este pacote muda —
 então uma alteração de layout faria o site exibir dois estilos ao mesmo
 tempo, os artigos novos com o novo e os antigos com o antigo.</p>
 <p>A cura, a cada mudança que afete layout:</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a><span class="ex">quarto</span> render quarto <span class="at">--no-freeze</span></span></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a><span class="fu">rm</span> <span class="at">-rf</span> quarto/_freeze      <span class="co"># sem apagar, o freeze devolve a execucao antiga</span></span>
+<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a><span class="ex">npm</span> run build:quarto</span></code></pre></div>
 <p>É o problema antigo com outro eixo. Antes, três cópias divergiam no
 <strong>espaço</strong>; agora, uma fonte só pode divergir no
 <strong>tempo</strong>.</p>
