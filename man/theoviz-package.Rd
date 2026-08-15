@@ -6,14 +6,15 @@
 \alias{theoviz-package}
 \title{theoviz: Identidade Visual dos Artigos de Dados Abertos}
 \description{
-Paleta validada para daltonismo, tema canonico das tabelas 'gt' e formatacao numerica em portugues do Brasil, compartilhados pelos projetos de dados abertos publicados em theoalbuquerque.com.br. Existe para que os artigos de projetos diferentes leiam como um sistema so, em vez de divergirem por copia.
+Paleta validada para daltonismo, tokens do sistema visual do site, tema canonico das tabelas 'gt' e formatacao numerica em portugues do Brasil, compartilhados pelos projetos de dados abertos publicados em theoalbuquerque.com.br. Existe para que os artigos de projetos diferentes leiam como um sistema so, em vez de divergirem por copia.
 }
 \section{O que este pacote decide, e o que nao decide}{
 
 
 \code{theoviz} guarda a identidade visual \strong{compartilhada} dos projetos de dados
-abertos publicados em \url{https://theoalbuquerque.com.br}: a paleta, o tema das
-tabelas \code{\link[gt:gt]{gt::gt()}} e a formatacao numerica em pt-BR.
+abertos publicados em \url{https://theoalbuquerque.com.br}: os tokens do sistema
+visual do site, a paleta, o tema das tabelas \code{\link[gt:gt]{gt::gt()}} e a formatacao
+numerica em pt-BR.
 
 Existe por um motivo concreto: as mesmas cores, o mesmo estilo de tabela e a
 mesma formatacao estavam copiados em tres projetos sob tres nomes diferentes,
@@ -21,14 +22,19 @@ identicos byte a byte. Tres copias divergem; um pacote, nao.
 
 Ele \strong{nao} traz tema de ggplot nem helpers de interatividade — esses
 codificam decisoes de cada projeto, e unificar exigiria parametrizar ate o
-ponto de nao decidir mais nada. A fronteira e essa: o que era identico entre
-projetos entra; o que diverge por razao legitima fica fora.
+ponto de nao decidir mais nada. Tambem nao traz tipografia, espacamento nem
+regras de forma: isso vive no CSS do site, onde e aplicavel. A fronteira e
+essa: o que era identico entre projetos entra; o que diverge por razao
+legitima, ou nao tem uso do lado do R, fica fora.
 }
 
-\section{As tres familias}{
+\section{As quatro familias}{
 
 
 \describe{
+\item{Sistema do site}{\code{\link[=site]{site()}}, \code{\link[=acento]{acento()}} — os tokens de cor da direcao
+"Boletim Tecnico", para que um grafico feito em R pouse na pagina sem
+que ninguem redigite um hexadecimal.}
 \item{Paleta}{\code{\link[=paleta]{paleta()}}, \code{\link[=tinta]{tinta()}}, \code{\link[=grade_rgba]{grade_rgba()}} — cores validadas para
 daltonismo, nos modos claro e escuro.}
 \item{Tabelas}{\code{\link[=tabela_gt]{tabela_gt()}}, \code{\link[=fmt_br]{fmt_br()}}, \code{\link[=fmt_pct_br]{fmt_pct_br()}} — o tema canonico
@@ -36,6 +42,21 @@ das tabelas dos artigos.}
 \item{Numeros}{\code{\link[=num_br]{num_br()}}, \code{\link[=pct_br]{pct_br()}}, \code{\link[=mil]{mil()}} — milhar com ponto, decimal
 com virgula.}
 }
+}
+
+\section{A cor de uma figura sai de onde}{
+
+
+Tres funcoes devolvem cor, e a escolha entre elas nao e de gosto:
+
+\describe{
+\item{\code{\link[=acento]{acento()}}}{\strong{uma} serie. O areia unico do site.}
+\item{\code{\link[=paleta]{paleta()}}}{\strong{duas ou mais} series, na ordem dos slots. O acento nao
+entra aqui.}
+\item{\code{\link[=tinta]{tinta()}}}{o que \strong{nao codifica dado} — texto, grade, eixo, fundo.}
+}
+
+\code{\link[=site]{site()}} esta abaixo das tres: e de la que as tintas do modo escuro saem.
 }
 
 \section{A regra que acompanha a paleta}{
@@ -46,6 +67,16 @@ nao se conserta trocando o tom — se trocasse, quebraria a separacao para
 daltonicos. O limite vira regra de desenho: \strong{todo grafico traz rotulo direto
 na ponta da serie}, alem da legenda. A identidade de uma serie nunca pode
 depender so da cor.
+}
+
+\section{O \code{gt} nao herda a pagina}{
+
+
+Sem instrucao de cor o \code{gt} crava \verb{background-color: #FFFFFF} \strong{inline}, e
+nenhuma folha de estilo do site derruba estilo inline. Como toda pagina do
+site e escura, uma tabela sem \code{modo = "escuro"} la dentro e um retangulo
+branco no meio do texto — foi exatamente isso que foi ao ar ate a 0.2.0.
+Escolha o \code{modo} de \code{\link[=tabela_gt]{tabela_gt()}} pela pagina em que a tabela vai cair.
 }
 
 \section{Aviso sobre \code{freeze}}{

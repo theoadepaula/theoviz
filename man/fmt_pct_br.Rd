@@ -19,3 +19,10 @@ O \code{gt_tbl} com as colunas formatadas como percentual.
 \description{
 Formata colunas de percentual em pt-BR
 }
+\examples{
+d <- data.frame(faixa = c("a", "b"), parte = c(0.331, 0.669))
+fmt_pct_br(tabela_gt(d), parte)
+}
+\seealso{
+\code{\link[=tabela_gt]{tabela_gt()}}, \code{\link[=pct_br]{pct_br()}}.
+}

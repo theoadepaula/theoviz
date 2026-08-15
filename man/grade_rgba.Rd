@@ -2,7 +2,7 @@
 % Please edit documentation in R/paleta.R
 \name{grade_rgba}
 \alias{grade_rgba}
-\title{Grade em rgba, para plotly}
+\title{Grade em rgba, para quando o fundo da pagina e desconhecido}
 \usage{
 grade_rgba(alfa = 0.22)
 }
@@ -17,6 +17,23 @@ O plotly precisa de fundo transparente para o widget herdar a cor da pagina
 em vez de cravar um branco dentro do tema escuro do site. A grade entao
 precisa de alfa, que hexadecimal de 6 digitos nao carrega.
 }
+\section{Prefira a grade solida quando souber onde o grafico pousa}{
+
+
+Este cinza -- \code{rgb(138,138,133)}, quente -- e um \strong{acordo}: um valor que
+sobrevive tanto sobre fundo claro quanto sobre escuro, porque em 2026-07 nao
+se sabia em qual dos dois o grafico ia cair.
+
+Hoje se sabe: o site e escuro por definicao. Um grafico que vai ao ar deve
+usar a grade solida do sistema, \code{tinta("grade", modo = "escuro")}
+(= \code{site("filete")}), que e fria como o resto da pagina. Esta funcao fica
+para o caso em que o fundo e mesmo desconhecido -- um widget embutido fora do
+site, por exemplo.
+}
+
 \examples{
 grade_rgba()
+}
+\seealso{
+\code{\link[=tinta]{tinta()}}, \code{\link[=site]{site()}}.
 }
