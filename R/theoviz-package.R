@@ -65,9 +65,12 @@
 #'
 #' O site renderiza os artigos com `freeze`, entao um artigo ja congelado **nao**
 #' re-renderiza quando este pacote muda. Depois de qualquer alteracao que afete
-#' layout, suba a versao e rode uma vez, no repo do site:
-#' `quarto render quarto --no-freeze`. Sem isso o site exibe dois estilos ao
-#' mesmo tempo.
+#' layout, suba a versao e rode uma vez, no repo do site: apague
+#' `quarto/_freeze/` e rode `npm run build:quarto`. Sem isso o site exibe dois
+#' estilos ao mesmo tempo.
+#'
+#' Nao use `quarto render quarto --no-freeze`: essa opcao nao existe no Quarto
+#' 1.9 e o render falha inteiro. Quem invalida o cache e apagar o `_freeze`.
 #'
 #' @seealso `vignette("theoviz")` para o passo a passo e o raciocinio completo.
 "_PACKAGE"
