@@ -28,7 +28,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">theoviz</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -224,11 +224,44 @@ que use <strong>somente esses dois slots</strong> precisa de rótulo
 direto ou textura. Usando os slots na ordem, o problema não aparece.</p>
 </div>
 <div class="section level3">
+<h3 id="marca-não-é-texto">Marca não é texto<a class="anchor" aria-label="anchor" href="#marca-n%C3%A3o-%C3%A9-texto"></a>
+</h3>
+<p>O piso de contraste de uma <strong>marca</strong> — linha, ponto,
+barra — é 3:1. O de <strong>texto</strong> é 4,5:1. O verde
+<code>s2</code> mede 3,86:1 sobre o chão do site: serve como linha, não
+serve como letra. E a cor da série vira letra mais do que parece — no
+rótulo direto na ponta da linha e na célula de tabela pintada pela
+série.</p>
+<p>Para esses casos existe <code>uso = "texto"</code>, só no modo
+escuro:</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/paleta.html">paleta</a></span><span class="op">(</span>modo <span class="op">=</span> <span class="st">"escuro"</span>, uso <span class="op">=</span> <span class="st">"texto"</span><span class="op">)</span></span>
+<span><span class="co">#&gt;        s1        s2        s3        s4 </span></span>
+<span><span class="co">#&gt; "#3987e5" "#008f56" "#d55181" "#c98500"</span></span></code></pre></div>
+<p>Muda <strong>só o verde</strong>, para <code>#008f56</code>: 4,60:1
+sobre <code>#0d1014</code>, perto o bastante do <code>s2</code> (ΔE 7,3)
+para ler como a mesma série. O caminho óbvio — clarear o
+<code>#008300</code> sem mexer no matiz — foi medido e descartado: o
+verde clareado chega à luminosidade do âmbar, e sob protanopia os dois
+viram a mesma cor (ΔE 0,8). O <code>#008f56</code> gira o matiz um pouco
+para o azulado e fica com o pior par sob daltonismo em ΔE 6,5, a mesma
+faixa 6–8 em que a paleta escura já vive. Texto sempre carrega
+codificação secundária — o próprio conteúdo —, então a faixa é legal
+aqui.</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">verde</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/paleta.html">paleta</a></span><span class="op">(</span><span class="fl">2</span>, modo <span class="op">=</span> <span class="st">"escuro"</span>, uso <span class="op">=</span> <span class="st">"texto"</span><span class="op">)</span><span class="op">[[</span><span class="st">"s2"</span><span class="op">]</span><span class="op">]</span></span>
+<span><span class="fu"><a href="../reference/tabela_gt.html">tabela_gt</a></span><span class="op">(</span><span class="va">d</span>, modo <span class="op">=</span> <span class="st">"escuro"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">gt</span><span class="fu">::</span><span class="fu"><a href="https://gt.rstudio.com/reference/tab_style.html" class="external-link">tab_style</a></span><span class="op">(</span><span class="fu">gt</span><span class="fu">::</span><span class="fu"><a href="https://gt.rstudio.com/reference/cell_text.html" class="external-link">cell_text</a></span><span class="op">(</span>color <span class="op">=</span> <span class="va">verde</span><span class="op">)</span>,</span>
+<span>                <span class="fu">gt</span><span class="fu">::</span><span class="fu"><a href="https://gt.rstudio.com/reference/cells_body.html" class="external-link">cells_body</a></span><span class="op">(</span>columns <span class="op">=</span> <span class="va">variacao</span>, rows <span class="op">=</span> <span class="va">variacao</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p>A linha do gráfico continua em <code>s2</code>; só o rótulo dela
+troca de verde.</p>
+</div>
+<div class="section level3">
 <h3 id="tintas-neutras">Tintas neutras<a class="anchor" aria-label="anchor" href="#tintas-neutras"></a>
 </h3>
 <p>Cinzas de texto, grade, eixo e fundo. Ficam separados das cores de
 série porque <strong>nunca codificam dado</strong> — só estrutura.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/tinta.html">tinta</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt;     forte     media     fraca     grade      eixo     fundo </span></span>
 <span><span class="co">#&gt; "#0b0b0b" "#52514e" "#898781" "#e1e0d9" "#c3c2b7" "#fcfcfb"</span></span>
@@ -239,7 +272,7 @@ série porque <strong>nunca codificam dado</strong> — só estrutura.</p>
 <span><span class="co">#&gt; "#dde1e6" "#a9b0b8" "#7d858e" "#2c333c" "#2c333c" "#0d1014"</span></span></code></pre></div>
 <p><strong>No modo escuro as tintas são os tokens do site</strong>,
 desde a 0.3.0 — não valores próprios:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/identical.html" class="external-link">identical</a></span><span class="op">(</span><span class="fu"><a href="../reference/tinta.html">tinta</a></span><span class="op">(</span><span class="st">"fraca"</span>, modo <span class="op">=</span> <span class="st">"escuro"</span><span class="op">)</span>, <span class="fu"><a href="../reference/site.html">site</a></span><span class="op">(</span><span class="st">"rotulo"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
 <p>Eram cinzas <strong>quentes</strong> herdados do sistema visual
@@ -259,7 +292,7 @@ distintos: o modo claro não foi rebaseado.</li>
 </ul>
 <p><code><a href="../reference/grade_rgba.html">grade_rgba()</a></code> devolve a grade com alfa, que hexadecimal
 de 6 dígitos não carrega:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/grade_rgba.html">grade_rgba</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "rgba(138,138,133,0.22)"</span></span>
 <span><span class="fu"><a href="../reference/grade_rgba.html">grade_rgba</a></span><span class="op">(</span><span class="fl">0.4</span><span class="op">)</span></span>
@@ -276,7 +309,7 @@ figura não sabe sobre o que vai pousar, e por isso não tem argumento
 <p><code><a href="../reference/tabela_gt.html">tabela_gt()</a></code> é o tema canônico. Em uma frase: régua
 horizontal apenas, cabeçalho discreto alinhado à esquerda, nenhuma linha
 vertical. Coluna se separa por espaço, não por tinta.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dados</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>  atividade <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Coleta seletiva"</span>, <span class="st">"Varrição manual"</span>, <span class="st">"Varrição mecanizada"</span><span class="op">)</span>,</span>
 <span>  valor     <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">54549</span>, <span class="fl">1067450</span>, <span class="fl">213081</span><span class="op">)</span></span>
@@ -806,12 +839,12 @@ ar como um retângulo branco no meio do texto.</p>
 qual ela foi feita — esta vignette tem fundo claro, e uma tabela
 transparente com tinta clara por cima seria invisível nele. É o mesmo
 argumento, na direção inversa:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dados</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/tabela_gt.html">tabela_gt</a></span><span class="op">(</span>titulo <span class="op">=</span> <span class="st">"Quantitativos de 2025"</span>, modo <span class="op">=</span> <span class="st">"escuro"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/fmt_br.html">fmt_br</a></span><span class="op">(</span><span class="va">valor</span><span class="op">)</span></span></code></pre></div>
 <div style="background:#0d1014;padding:24px">
-<div id="wkkeulbfdp" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<div id="eexombwkke" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <table class="table gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false" style="-webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; font-family: 'IBM Plex Sans', system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'; display: table; border-collapse: collapse; line-height: normal; margin-left: auto; margin-right: auto; color: #A9B0B8; font-size: 14px; font-weight: normal; font-style: normal; background-color: rgba(255, 255, 255, 0); width: auto; border-top-style: none; border-top-width: 2px; border-top-color: #A8A8A8; border-right-style: none; border-right-width: 2px; border-right-color: #D3D3D3; border-bottom-style: none; border-bottom-width: 2px; border-bottom-color: #A8A8A8; border-left-style: none; border-left-width: 2px; border-left-color: #D3D3D3;" bgcolor="rgba(255, 255, 255, 0)">
 <thead style="border-style: none;">
 <tr class="gt_heading" style="border-style: none; background-color: rgba(255, 255, 255, 0); text-align: left; border-bottom-color: rgba(255, 255, 255, 0); border-left-style: none; border-left-width: 1px; border-left-color: #D3D3D3; border-right-style: none; border-right-width: 1px; border-right-color: #D3D3D3;" bgcolor="rgba(255, 255, 255, 0)" align="left">
@@ -883,7 +916,7 @@ Mudou o estilo? Muda aqui, sobe a versão.</p>
 <div class="section level2">
 <h2 id="números">Números<a class="anchor" aria-label="anchor" href="#n%C3%BAmeros"></a>
 </h2>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/num_br.html">num_br</a></span><span class="op">(</span><span class="fl">1234567</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "1.234.567"</span></span>
 <span><span class="fu"><a href="../reference/num_br.html">num_br</a></span><span class="op">(</span><span class="fl">33.126</span>, dec <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
@@ -905,14 +938,14 @@ implementações antigas tinham esse defeito, contornado com
 <p>Cada projeto carrega o pacote no seu arquivo de tema e dá um
 <strong>alias local</strong>, para não mexer nos <code>.qmd</code> já
 escritos:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://theoadepaula.github.io/theoviz/">theoviz</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">tabela</span> <span class="op">&lt;-</span> <span class="va">tabela_gt</span>        <span class="co"># relatorios-slu, cargos-executivo-federal</span></span>
 <span><span class="va">tabela_amb</span> <span class="op">&lt;-</span> <span class="va">tabela_gt</span>    <span class="co"># anuario-mineral-brasileiro</span></span></code></pre></div>
 <p>E constrói o tema de ggplot <strong>sobre</strong> a paleta, em vez
 de repetir hexadecimais:</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tema_projeto</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">modo</span> <span class="op">=</span> <span class="st">"escuro"</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu">theme_minimal</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu">theme</span><span class="op">(</span></span>
@@ -952,8 +985,8 @@ congelado <strong>não</strong> re-renderiza quando este pacote muda —
 então uma alteração de layout faria o site exibir dois estilos ao mesmo
 tempo, os artigos novos com o novo e os antigos com o antigo.</p>
 <p>A cura, a cada mudança que afete layout:</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a><span class="fu">rm</span> <span class="at">-rf</span> quarto/_freeze      <span class="co"># sem apagar, o freeze devolve a execucao antiga</span></span>
-<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a><span class="ex">npm</span> run build:quarto</span></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a><span class="fu">rm</span> <span class="at">-rf</span> quarto/_freeze      <span class="co"># sem apagar, o freeze devolve a execucao antiga</span></span>
+<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a><span class="ex">npm</span> run build:quarto</span></code></pre></div>
 <p>É o problema antigo com outro eixo. Antes, três cópias divergiam no
 <strong>espaço</strong>; agora, uma fonte só pode divergir no
 <strong>tempo</strong>.</p>

@@ -13,7 +13,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">theoviz</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -46,7 +46,7 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">paleta</span><span class="op">(</span>n <span class="op">=</span> <span class="fl">4</span>, modo <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"claro"</span>, <span class="st">"escuro"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">paleta</span><span class="op">(</span>n <span class="op">=</span> <span class="fl">4</span>, modo <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"claro"</span>, <span class="st">"escuro"</span><span class="op">)</span>, uso <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"marca"</span>, <span class="st">"texto"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -61,6 +61,12 @@
 <dd><p><code>"claro"</code> (padrao) ou <code>"escuro"</code>. O modo escuro tem passos
 proprios, validados contra a superficie escura – nao e um clareamento
 automatico do claro.</p></dd>
+
+
+<dt id="arg-uso">uso<a class="anchor" aria-label="anchor" href="#arg-uso"></a></dt>
+<dd><p><code>"marca"</code> (padrao) para linha, ponto e barra – piso de 3:1 – ou
+<code>"texto"</code> quando a cor da serie pinta texto – piso de 4,5:1. Ver a secao
+<em>Marca nao e texto</em>. <code>"texto"</code> so existe com <code>modo = "escuro"</code>.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -100,6 +106,36 @@ nova.</p>
 isso ela vale nos dois modos: identidade de serie nunca depende so de cor.</p>
     </div>
     <div class="section level2">
+    <h2 id="marca-nao-e-texto">Marca nao e texto<a class="anchor" aria-label="anchor" href="#marca-nao-e-texto"></a></h2>
+
+
+
+<p>Os slots acima sao cores de <strong>marca</strong> – linha, ponto, barra –, e o piso de
+marca e 3:1. Texto tem piso de <strong>4,5:1</strong> (WCAG AA), e o verde <code>s2</code>, com
+3,86:1 sobre <code>#0d1014</code>, nao chega la. Por isso, quando a cor da serie vira
+<strong>texto</strong> – celula de tabela <code>gt</code> pintada pela serie, rotulo direto na ponta
+da linha, anotacao plotly –, peca <code>uso = "texto"</code>:</p>
+<div class="sourceCode"><pre><code><span></span>
+<span><span class="va">verde</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/paleta.html">paleta</a></span><span class="op">(</span><span class="fl">2</span>, <span class="st">"escuro"</span>, uso <span class="op">=</span> <span class="st">"texto"</span><span class="op">)</span><span class="op">[[</span><span class="st">"s2"</span><span class="op">]</span><span class="op">]</span></span>
+<span><span class="fu">gt</span><span class="fu">::</span><span class="fu"><a href="https://gt.rstudio.com/reference/tab_style.html" class="external-link">tab_style</a></span><span class="op">(</span><span class="va">g</span>, <span class="fu">gt</span><span class="fu">::</span><span class="fu"><a href="https://gt.rstudio.com/reference/cell_text.html" class="external-link">cell_text</a></span><span class="op">(</span>color <span class="op">=</span> <span class="va">verde</span><span class="op">)</span>,</span>
+<span>              <span class="fu">gt</span><span class="fu">::</span><span class="fu"><a href="https://gt.rstudio.com/reference/cells_body.html" class="external-link">cells_body</a></span><span class="op">(</span>columns <span class="op">=</span> <span class="va">variacao</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+
+<p>A variante de texto troca <strong>so o verde</strong>: <code>#008f56</code>, 4,60:1 sobre <code>noite</code>, a
+DeltaE 7,3 do <code>s2</code> em visao normal – le como o mesmo verde. Os outros tres
+slots ja passam 4,5:1 (5,24 / 4,83 / 6,21) e saem iguais. A linha do grafico
+segue em <code>s2</code>; so o rotulo dela muda.</p>
+<p>Sob daltonismo, o pior par da variante de texto fica em DeltaE 6,5 – a faixa
+6-8, legal so com codificacao secundaria. Texto sempre a tem: o proprio
+conteudo (o nome da serie, o sinal do numero). A cor reforca, nunca decide.</p>
+<p>A garantia e sobre <code>noite</code>, o chao em que tabelas e graficos pousam. Sobre a
+<code>chapa</code> o verde de texto cai para 4,26 e o magenta para 4,47: texto colorido
+dentro de cartao nao esta coberto.</p>
+<p>So existe no modo escuro. No claro, tres dos quatro slots ficam abaixo de
+4,5:1 sobre <code>#fcfcfb</code> (4,30 / 2,62 / 2,11), e o site nao tem superficie clara
+contra a qual validar uma alternativa – pedir <code>uso = "texto"</code> no claro e
+erro, nao silencio.</p>
+    </div>
+    <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p><code><a href="acento.html">acento()</a></code> para o caso de uma serie so; <code><a href="tinta.html">tinta()</a></code> para os neutros.</p></div>
     </div>
@@ -115,6 +151,11 @@ isso ela vale nos dois modos: identidade de serie nunca depende so de cor.</p>
 <span class="r-in"><span><span class="fu">paleta</span><span class="op">(</span>modo <span class="op">=</span> <span class="st">"escuro"</span><span class="op">)</span>     <span class="co"># os quatro passos do modo escuro</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>        s1        s2        s3        s4 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> "#3987e5" "#008300" "#d55181" "#c98500" </span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># a cor da serie como TEXTO (celula de tabela, rotulo direto):</span></span></span>
+<span class="r-in"><span><span class="fu">paleta</span><span class="op">(</span>modo <span class="op">=</span> <span class="st">"escuro"</span>, uso <span class="op">=</span> <span class="st">"texto"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        s1        s2        s3        s4 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> "#3987e5" "#008f56" "#d55181" "#c98500" </span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

@@ -1,5 +1,86 @@
 # Changelog
 
+## theoviz 0.4.0
+
+**A cor da série ganha uma variante para texto.** Novo argumento:
+`paleta(uso = c("marca", "texto"))`. O padrão é `"marca"`, que devolve
+exatamente o que devolvia antes — nenhum gráfico muda.
+
+### O verde não passava como texto
+
+O `s2` (`#008300`) mede **3,86:1** sobre o chão do site (`#0d1014`).
+Para marca — linha, ponto, barra — o piso é 3:1, e ele passa. Para
+**texto** o piso é **4,5:1** (WCAG 1.4.3), e ele não passa.
+
+E ele virava texto. Não neste pacote —
+[`tabela_gt()`](https://theoadepaula.github.io/theoviz/reference/tabela_gt.md)
+nunca pinta cor de série —, mas no código dos artigos, de dois jeitos:
+
+- **célula de tabela** pintada com a cor da série
+  (`gt::cell_text(color = CORES[["s2"]])`, a variação positiva em
+  verde);
+- **rótulo direto** na ponta da linha (`geom_text` no ggiraph, anotação
+  no plotly), que o pacote manda pôr na cor da série.
+
+O Lighthouse acusou `color-contrast` em 2026-11 e segurou em 96 de
+acessibilidade os artigos “A coleta seletiva do DF triplicou”, “A série
+histórica que encolheu” e os dois da água mineral.
+
+### A variante: `#008f56`
+
+``` r
+
+paleta(modo = "escuro", uso = "texto")
+#>        s1        s2        s3        s4
+#> "#3987e5" "#008f56" "#d55181" "#c98500"
+```
+
+Muda **só o verde**. Os outros três já passam 4,5:1 sobre `#0d1014`
+(5,24 / 4,83 / 6,21).
+
+|  | contraste sobre `noite` | ΔE do `s2` (normal) | pior par sob daltonismo |
+|----|----|----|----|
+| `#008300` (marca) | 3,86 | — | ΔE 6,9 (protan, vs `s4`) |
+| `#269622` (só clarear) | 4,96 | 6,1 | **ΔE 0,8** (protan, vs `s4`) — descartado |
+| `#008f56` (texto) | **4,60** | 7,3 | ΔE 6,5 (deutan, vs `s3`) |
+
+O caminho óbvio — clarear o `#008300` mantendo matiz e croma — foi
+medido e **descartado**: o verde clareado chega à luminosidade do âmbar,
+e sob protanopia os dois viram a mesma cor. O `#008f56` sobe a
+luminosidade *e* gira o matiz para o azulado (OKLCH h 142,5 → 157,0).
+Numa grade de ~17 mil verdes com 4,5:1 sobre este chão, nenhum passa de
+ΔE 6,9 contra os três outros slots; o escolhido fica na mesma faixa 6–8
+em que o `s2` × `s4` da paleta escura já vive. A faixa só é legal com
+codificação secundária, e texto sempre a tem: o próprio conteúdo. Medido
+em 2026-11-09 com o validador do skill `dataviz`.
+
+**Limites, ditos:** a garantia é sobre `noite`. Sobre a `chapa`
+(`#141920`) o verde de texto mede 4,26 e o magenta 4,47 — texto colorido
+dentro de cartão não está coberto. E `uso = "texto"` **só existe no modo
+escuro**: no claro, `s1`, `s3` e `s4` ficam abaixo de 4,5:1 sobre
+`#fcfcfb` e não há alternativa validada. Pedir no claro é erro, não
+silêncio.
+
+### Testes
+
+- `test-site.R` cobra 4,5:1 sobre `noite` para os quatro slots de texto,
+  com o contraste recalculado pelo helper — e trava que o `s2` de marca
+  **não** passa, para que a variante seja aposentada no dia em que
+  deixar de ser necessária.
+- `test-paleta.R` trava `#008f56` e garante que `uso = "marca"` segue
+  sendo o padrão, idêntico à 0.3.1.
+
+### O que fazer nos projetos
+
+Trocar a cor de série por `paleta(..., modo = "escuro", uso = "texto")`
+onde ela pinta **texto** — `cell_text(color = ...)`,
+`geom_text(colour = ...)`, `annotations(font = list(color = ...))` —,
+mantendo a de marca nas linhas e pontos. Depois, no repo do site,
+`rm -rf quarto/_freeze` e `npm run build:quarto`. O pacote não se
+propaga sozinho.
+
+------------------------------------------------------------------------
+
 ## theoviz 0.3.1
 
 Correção de documentação. Nenhuma mudança de comportamento.

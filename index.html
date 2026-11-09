@@ -32,7 +32,7 @@
 
     <a class="navbar-brand me-2" href="index.html">theoviz</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -180,8 +180,14 @@
 <blockquote>
 <p>⚠️ <strong>Limite do modo escuro:</strong> considerando <em>todos</em> os pares, e não só os adjacentes, <code>s2</code> (verde) × <code>s4</code> (âmbar) cai para ΔE 6,9 em protanopia — dentro da faixa 6–8, que só é legal com codificação secundária. Um gráfico escuro que use <strong>somente esses dois</strong> precisa de rótulo direto ou textura. Usando os slots na ordem, o problema não aparece.</p>
 </blockquote>
-<p><code><a href="reference/tinta.html">tinta()</a></code> traz os neutros — texto, grade, eixo, fundo — separados das cores de série porque nunca codificam dado, só estrutura. <strong>No modo escuro elas agora são os tokens do site</strong>, não valores próprios:</p>
+<p><strong>Marca não é texto.</strong> Os slots são cores de marca (linha, ponto, barra), com piso de 3:1. Quando a cor da série pinta <strong>texto</strong> — rótulo direto, célula de tabela <code>gt</code> —, o piso é 4,5:1, e o verde de marca (3,86:1) não chega lá. Para isso existe a variante de texto, só no modo escuro:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="reference/paleta.html">paleta</a></span><span class="op">(</span>modo <span class="op">=</span> <span class="st">"escuro"</span>, uso <span class="op">=</span> <span class="st">"texto"</span><span class="op">)</span></span>
+<span><span class="co">#&gt;        s1        s2        s3        s4</span></span>
+<span><span class="co">#&gt; "#3987e5" "#008f56" "#d55181" "#c98500"</span></span></code></pre></div>
+<p>Muda só o verde: <code>#008f56</code>, 4,60:1 sobre <code>#0d1014</code>, ΔE 7,3 do <code>s2</code> (lê como a mesma série). Clarear o <code>#008300</code> sem girar o matiz levava o verde à luminosidade do âmbar, e sob protanopia os dois ficavam iguais (ΔE 0,8); o <code>#008f56</code> fica com o pior par em ΔE 6,5. Os gráficos não mudam — a linha segue em <code>s2</code>, só o rótulo troca.</p>
+<p><code><a href="reference/tinta.html">tinta()</a></code> traz os neutros — texto, grade, eixo, fundo — separados das cores de série porque nunca codificam dado, só estrutura. <strong>No modo escuro elas agora são os tokens do site</strong>, não valores próprios:</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/tinta.html">tinta</a></span><span class="op">(</span>modo <span class="op">=</span> <span class="st">"escuro"</span><span class="op">)</span></span>
 <span><span class="co">#&gt;     forte     media     fraca     grade      eixo     fundo</span></span>
 <span><span class="co">#&gt; "#dde1e6" "#a9b0b8" "#7d858e" "#2c333c" "#2c333c" "#0d1014"</span></span></code></pre></div>
@@ -192,7 +198,7 @@
 <a class="anchor" aria-label="anchor" href="#tabelas--tabela_gt-fmt_br-fmt_pct_br"></a>
 </h3>
 <p>Régua horizontal apenas, cabeçalho discreto alinhado à esquerda, nenhuma linha vertical. Coluna se separa por espaço, não por tinta.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dados</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="reference/tabela_gt.html">tabela_gt</a></span><span class="op">(</span>titulo <span class="op">=</span> <span class="st">"Atividades que somem da série histórica"</span>,</span>
 <span>            nota   <span class="op">=</span> <span class="st">"Fonte: *relatórios anuais*."</span>,</span>
@@ -207,7 +213,7 @@
 <a class="anchor" aria-label="anchor" href="#n%C3%BAmeros--num_br-pct_br-mil"></a>
 </h3>
 <p>Milhar com ponto, decimal com vírgula.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/num_br.html">num_br</a></span><span class="op">(</span><span class="fl">1234567</span><span class="op">)</span>          <span class="co">#&gt; "1.234.567"</span></span>
 <span><span class="fu"><a href="reference/num_br.html">num_br</a></span><span class="op">(</span><span class="fl">33.126</span>, dec <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>  <span class="co">#&gt; "33,13"</span></span>
 <span><span class="fu"><a href="reference/pct_br.html">pct_br</a></span><span class="op">(</span><span class="fl">33.126</span><span class="op">)</span>           <span class="co">#&gt; "33,1%"</span></span>
@@ -267,8 +273,8 @@
 </h2>
 <p>O site renderiza os artigos com <code>freeze</code>, então <strong>um artigo já congelado não re-renderiza quando este pacote muda</strong>. Uma alteração de layout faria o site exibir dois estilos ao mesmo tempo.</p>
 <p>A cura: a cada mudança que afete layout, subir a versão no <code>DESCRIPTION</code> e rodar uma vez, no repo do site:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="fu">rm</span> <span class="at">-rf</span> quarto/_freeze      <span class="co"># sem apagar, o freeze devolve a execução antiga</span></span>
-<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a><span class="ex">npm</span> run build:quarto</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="fu">rm</span> <span class="at">-rf</span> quarto/_freeze      <span class="co"># sem apagar, o freeze devolve a execução antiga</span></span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a><span class="ex">npm</span> run build:quarto</span></code></pre></div>
 <blockquote>
 <p>⚠️ <strong>Não use <code>quarto render quarto --no-freeze</code>.</strong> Essa opção não existe no Quarto 1.9 — ela é repassada ao pandoc, que responde <code>Unknown option</code> e o render falha inteiro. Era o comando documentado aqui até 2026-08-15, e o erro só aparece quando alguém tenta usá-lo. Apagar o <code>_freeze</code> é o que invalida o cache; <code>build:quarto</code> ainda encadeia a poda das fontes do ggiraph e o sync para o Astro, que um <code>quarto render</code> cru deixaria de fora.</p>
 </blockquote>
@@ -280,7 +286,7 @@
 <p>O site de referência é gerado por <a href="https://pkgdown.r-lib.org" class="external-link">pkgdown</a> e publicado a cada push na <code>main</code>:</p>
 <p><strong><a href="https://theoadepaula.github.io/theoviz/" class="uri">https://theoadepaula.github.io/theoviz/</a></strong></p>
 <p>Offline, a mesma coisa:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="op">?</span><span class="va">theoviz</span>              <span class="co"># visão geral: as famílias, a fronteira do pacote</span></span>
 <span><span class="op">?</span><span class="va">site</span>                 <span class="co"># ajuda de cada função</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/vignette.html" class="external-link">vignette</a></span><span class="op">(</span><span class="st">"theoviz"</span><span class="op">)</span>   <span class="co"># o passo a passo, com o raciocínio por trás das decisões</span></span></code></pre></div>
@@ -288,15 +294,15 @@
 <div class="section level2">
 <h2 id="desenvolvimento">Desenvolvimento<a class="anchor" aria-label="anchor" href="#desenvolvimento"></a>
 </h2>
-<div class="sourceCode" id="cb9"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="ex">R</span> CMD INSTALL .</span>
-<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a><span class="ex">Rscript</span> <span class="at">-e</span> <span class="st">'testthat::test_dir("tests/testthat")'</span></span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="ex">R</span> CMD INSTALL .</span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a><span class="ex">Rscript</span> <span class="at">-e</span> <span class="st">'testthat::test_dir("tests/testthat")'</span></span></code></pre></div>
 <p>Ciclo completo, antes de abrir PR:</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="ex">Rscript</span> <span class="at">-e</span> <span class="st">'roxygen2::roxygenise(".")'</span>   <span class="co"># regenera man/ e NAMESPACE</span></span>
-<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a><span class="ex">R</span> CMD build .</span>
-<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a><span class="ex">R</span> CMD check theoviz_<span class="pp">*</span>.tar.gz <span class="at">--as-cran</span></span>
-<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a><span class="ex">Rscript</span> <span class="at">-e</span> <span class="st">'pkgdown::build_site()'</span>       <span class="co"># opcional; o CI faz isso na main</span></span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="ex">Rscript</span> <span class="at">-e</span> <span class="st">'roxygen2::roxygenise(".")'</span>   <span class="co"># regenera man/ e NAMESPACE</span></span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a><span class="ex">R</span> CMD build .</span>
+<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a><span class="ex">R</span> CMD check theoviz_<span class="pp">*</span>.tar.gz <span class="at">--as-cran</span></span>
+<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a><span class="ex">Rscript</span> <span class="at">-e</span> <span class="st">'pkgdown::build_site()'</span>       <span class="co"># opcional; o CI faz isso na main</span></span></code></pre></div>
 <p>Regenerar as figuras do README (precisa de Chrome e do repo do site por perto, pelas fontes IBM Plex):</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="ex">Rscript</span> data-raw/figuras.R</span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a><span class="ex">Rscript</span> data-raw/figuras.R</span></code></pre></div>
 <blockquote>
 <p><strong><code>man/</code>, <code>NAMESPACE</code> e <code>docs/</code> são gerados — não edite à mão.</strong> A documentação vive nos blocos roxygen, junto do código que ela descreve. O <code>docs/</code> nem é versionado: quem publica é o workflow <code>pkgdown.yaml</code>.</p>
 </blockquote>

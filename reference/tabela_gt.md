@@ -79,6 +79,17 @@ Sans**. E a Regra das Duas Vozes do site: sans e discurso, mono e
 medida. A fronteira e semantica, nao estetica – um numero existe para
 ser comparado com outro, e a mono e o que diz isso.
 
+## Celula pintada com a cor da serie
+
+Este tema nao pinta nenhuma celula de cor de serie. Quando o artigo
+pinta – variacao positiva em verde, por exemplo, com
+[`gt::tab_style()`](https://gt.rstudio.com/reference/tab_style.html) –,
+a cor e de **texto**, e texto tem piso de 4,5:1. Use
+`paleta(modo = "escuro", uso = "texto")`, nao a paleta de marca: o verde
+de marca (`#008300`) mede 3,86:1 sobre o chao do site e foi acusado pelo
+Lighthouse. Ver
+[`paleta()`](https://theoadepaula.github.io/theoviz/reference/paleta.md).
+
 ## See also
 
 [`fmt_br()`](https://theoadepaula.github.io/theoviz/reference/fmt_br.md)
@@ -86,7 +97,9 @@ e
 [`fmt_pct_br()`](https://theoadepaula.github.io/theoviz/reference/fmt_pct_br.md)
 para a formatacao pt-BR das colunas;
 [`tinta()`](https://theoadepaula.github.io/theoviz/reference/tinta.md)
-para as tintas que este tema consome.
+para as tintas que este tema consome;
+[`paleta()`](https://theoadepaula.github.io/theoviz/reference/paleta.md)
+com `uso = "texto"` para pintar celula com a cor de uma serie.
 
 ## Examples
 

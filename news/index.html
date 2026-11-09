@@ -13,7 +13,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">theoviz</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -40,6 +40,63 @@
     </div>
 
     <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.4.0" id="theoviz-040">theoviz 0.4.0<a class="anchor" aria-label="anchor" href="#theoviz-040"></a></h2>
+<p><strong>A cor da série ganha uma variante para texto.</strong> Novo argumento: <code>paleta(uso = c("marca", "texto"))</code>. O padrão é <code>"marca"</code>, que devolve exatamente o que devolvia antes — nenhum gráfico muda.</p>
+<div class="section level3">
+<h3 id="o-verde-não-passava-como-texto-0-4-0">O verde não passava como texto<a class="anchor" aria-label="anchor" href="#o-verde-n%C3%A3o-passava-como-texto-0-4-0"></a></h3>
+<p>O <code>s2</code> (<code>#008300</code>) mede <strong>3,86:1</strong> sobre o chão do site (<code>#0d1014</code>). Para marca — linha, ponto, barra — o piso é 3:1, e ele passa. Para <strong>texto</strong> o piso é <strong>4,5:1</strong> (WCAG 1.4.3), e ele não passa.</p>
+<p>E ele virava texto. Não neste pacote — <code><a href="../reference/tabela_gt.html">tabela_gt()</a></code> nunca pinta cor de série —, mas no código dos artigos, de dois jeitos:</p>
+<ul><li>
+<strong>célula de tabela</strong> pintada com a cor da série (<code>gt::cell_text(color = CORES[["s2"]])</code>, a variação positiva em verde);</li>
+<li>
+<strong>rótulo direto</strong> na ponta da linha (<code>geom_text</code> no ggiraph, anotação no plotly), que o pacote manda pôr na cor da série.</li>
+</ul><p>O Lighthouse acusou <code>color-contrast</code> em 2026-11 e segurou em 96 de acessibilidade os artigos “A coleta seletiva do DF triplicou”, “A série histórica que encolheu” e os dois da água mineral.</p>
+</div>
+<div class="section level3">
+<h3 id="a-variantef56-0-4-0">A variante: <code>#008f56</code>
+<a class="anchor" aria-label="anchor" href="#a-variantef56-0-4-0"></a></h3>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/paleta.html">paleta</a></span><span class="op">(</span>modo <span class="op">=</span> <span class="st">"escuro"</span>, uso <span class="op">=</span> <span class="st">"texto"</span><span class="op">)</span></span>
+<span><span class="co">#&gt;        s1        s2        s3        s4</span></span>
+<span><span class="co">#&gt; "#3987e5" "#008f56" "#d55181" "#c98500"</span></span></code></pre></div>
+<p>Muda <strong>só o verde</strong>. Os outros três já passam 4,5:1 sobre <code>#0d1014</code> (5,24 / 4,83 / 6,21).</p>
+<table class="table"><colgroup><col width="25%"><col width="25%"><col width="25%"><col width="25%"></colgroup><thead><tr><th></th>
+<th>contraste sobre <code>noite</code>
+</th>
+<th>ΔE do <code>s2</code> (normal)</th>
+<th>pior par sob daltonismo</th>
+</tr></thead><tbody><tr><td>
+<code>#008300</code> (marca)</td>
+<td>3,86</td>
+<td>—</td>
+<td>ΔE 6,9 (protan, vs <code>s4</code>)</td>
+</tr><tr><td>
+<code>#269622</code> (só clarear)</td>
+<td>4,96</td>
+<td>6,1</td>
+<td>
+<strong>ΔE 0,8</strong> (protan, vs <code>s4</code>) — descartado</td>
+</tr><tr><td>
+<code>#008f56</code> (texto)</td>
+<td><strong>4,60</strong></td>
+<td>7,3</td>
+<td>ΔE 6,5 (deutan, vs <code>s3</code>)</td>
+</tr></tbody></table><p>O caminho óbvio — clarear o <code>#008300</code> mantendo matiz e croma — foi medido e <strong>descartado</strong>: o verde clareado chega à luminosidade do âmbar, e sob protanopia os dois viram a mesma cor. O <code>#008f56</code> sobe a luminosidade <em>e</em> gira o matiz para o azulado (OKLCH h 142,5 → 157,0). Numa grade de ~17 mil verdes com 4,5:1 sobre este chão, nenhum passa de ΔE 6,9 contra os três outros slots; o escolhido fica na mesma faixa 6–8 em que o <code>s2</code> × <code>s4</code> da paleta escura já vive. A faixa só é legal com codificação secundária, e texto sempre a tem: o próprio conteúdo. Medido em 2026-11-09 com o validador do skill <code>dataviz</code>.</p>
+<p><strong>Limites, ditos:</strong> a garantia é sobre <code>noite</code>. Sobre a <code>chapa</code> (<code>#141920</code>) o verde de texto mede 4,26 e o magenta 4,47 — texto colorido dentro de cartão não está coberto. E <code>uso = "texto"</code> <strong>só existe no modo escuro</strong>: no claro, <code>s1</code>, <code>s3</code> e <code>s4</code> ficam abaixo de 4,5:1 sobre <code>#fcfcfb</code> e não há alternativa validada. Pedir no claro é erro, não silêncio.</p>
+</div>
+<div class="section level3">
+<h3 id="testes-0-4-0">Testes<a class="anchor" aria-label="anchor" href="#testes-0-4-0"></a></h3>
+<ul><li>
+<code>test-site.R</code> cobra 4,5:1 sobre <code>noite</code> para os quatro slots de texto, com o contraste recalculado pelo helper — e trava que o <code>s2</code> de marca <strong>não</strong> passa, para que a variante seja aposentada no dia em que deixar de ser necessária.</li>
+<li>
+<code>test-paleta.R</code> trava <code>#008f56</code> e garante que <code>uso = "marca"</code> segue sendo o padrão, idêntico à 0.3.1.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="o-que-fazer-nos-projetos-0-4-0">O que fazer nos projetos<a class="anchor" aria-label="anchor" href="#o-que-fazer-nos-projetos-0-4-0"></a></h3>
+<p>Trocar a cor de série por <code>paleta(..., modo = "escuro", uso = "texto")</code> onde ela pinta <strong>texto</strong> — <code>cell_text(color = ...)</code>, <code>geom_text(colour = ...)</code>, <code>annotations(font = list(color = ...))</code> —, mantendo a de marca nas linhas e pontos. Depois, no repo do site, <code>rm -rf quarto/_freeze</code> e <code>npm run build:quarto</code>. O pacote não se propaga sozinho.</p>
+<hr></div>
+</div>
+    <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.3.1" id="theoviz-031">theoviz 0.3.1<a class="anchor" aria-label="anchor" href="#theoviz-031"></a></h2>
 <p>Correção de documentação. Nenhuma mudança de comportamento.</p>
 <div class="section level3">
@@ -47,8 +104,8 @@
 <p>A 0.3.0 mandava rodar <code>quarto render quarto --no-freeze</code> depois de qualquer mudança de layout — em nove lugares: README, NEWS, <code><a href="../reference/theoviz-package.html">?theoviz</a></code>, <code><a href="../reference/tinta.html">?tinta</a></code>, comentários de <code>R/paleta.R</code> e a vignette.</p>
 <p><strong>Essa opção não existe no Quarto 1.9.</strong> Ela é repassada ao pandoc, que responde <code>Unknown option --no-freeze</code>, e o render do projeto inteiro falha. Descoberto em 2026-08-15, ao migrar de fato os três projetos para o modo escuro — que foi a primeira vez que alguém executou a instrução.</p>
 <p>O caminho que funciona, no repo do site:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">rm</span> <span class="at">-rf</span> quarto/_freeze      <span class="co"># é apagar o cache que invalida a execução</span></span>
-<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="ex">npm</span> run build:quarto</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">rm</span> <span class="at">-rf</span> quarto/_freeze      <span class="co"># é apagar o cache que invalida a execução</span></span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="ex">npm</span> run build:quarto</span></code></pre></div>
 <p><code>build:quarto</code> não é enfeite sobre <code>quarto render</code>: ele encadeia a poda das fontes do ggiraph — 326 MB numa execução medida — e o sync para o Astro. Um <code>quarto render</code> cru deixa os dois de fora.</p>
 </div>
 <div class="section level3">
@@ -65,7 +122,7 @@
 <h3 id="red_circle-correção-a-tabela-branca-no-meio-da-página-escura-0-3-0">🔴 Correção: a tabela branca no meio da página escura<a class="anchor" aria-label="anchor" href="#red_circle-corre%C3%A7%C3%A3o-a-tabela-branca-no-meio-da-p%C3%A1gina-escura-0-3-0"></a></h3>
 <p><code><a href="../reference/tabela_gt.html">tabela_gt()</a></code> <strong>não dizia uma cor sequer</strong>. Parecia elegância — “a tabela herda a página” — e era o oposto: o <code>gt</code> não herda nada. Sem instrução ele crava <code>background-color: #FFFFFF</code> com texto <code>#333333</code>, <em>inline</em>, e nenhum <code>custom.scss</code> derruba estilo inline.</p>
 <p>Como toda página do site é escura, <strong>toda tabela de todo artigo ia ao ar como um retângulo branco no meio do texto.</strong></p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/tabela_gt.html">tabela_gt</a></span><span class="op">(</span><span class="va">dados</span>, modo <span class="op">=</span> <span class="st">"escuro"</span><span class="op">)</span>   <span class="co"># novo argumento</span></span></code></pre></div>
 <ul><li>
 <code>"escuro"</code> — fundo <strong>transparente</strong> e tintas do site. A tabela pousa na página em vez de recortar uma chapa dentro dela. É a mesma escolha já feita nos gráficos plotly do SLU (<code>paper_bgcolor = "rgba(0,0,0,0)"</code>), pelo mesmo motivo.</li>
@@ -77,7 +134,7 @@
 <h3 id="novo-site-e-acento-0-3-0">Novo: <code>site()</code> e <code>acento()</code>
 <a class="anchor" aria-label="anchor" href="#novo-site-e-acento-0-3-0"></a></h3>
 <p>Os tokens de cor da direção “Boletim Técnico”, espelhados do bloco <code>@theme</code> de <code>src/styles/global.css</code>.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/site.html">site</a></span><span class="op">(</span><span class="st">"noite"</span><span class="op">)</span>    <span class="co">#&gt; "#0d1014"   -- o chão da página</span></span>
 <span><span class="fu"><a href="../reference/site.html">site</a></span><span class="op">(</span><span class="st">"filete"</span><span class="op">)</span>   <span class="co">#&gt; "#2c333c"   -- grade e base de eixo</span></span>
 <span><span class="fu"><a href="../reference/acento.html">acento</a></span><span class="op">(</span><span class="op">)</span>         <span class="co">#&gt; "#cfae72"   -- o areia, único acento do sistema</span></span></code></pre></div>
@@ -199,7 +256,7 @@
 <div class="section level3">
 <h3 id="modo-escuro-na-paleta-0-2-0">Modo escuro na paleta<a class="anchor" aria-label="anchor" href="#modo-escuro-na-paleta-0-2-0"></a></h3>
 <p><code><a href="../reference/paleta.html">paleta()</a></code> e <code><a href="../reference/tinta.html">tinta()</a></code> agora aceitam <code>modo = "escuro"</code>.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/paleta.html">paleta</a></span><span class="op">(</span>modo <span class="op">=</span> <span class="st">"escuro"</span><span class="op">)</span></span>
 <span><span class="co">#&gt;        s1        s2        s3        s4</span></span>
 <span><span class="co">#&gt; "#3987e5" "#008300" "#d55181" "#c98500"</span></span>
