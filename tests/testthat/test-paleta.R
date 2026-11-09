@@ -120,6 +120,36 @@ test_that("modo desconhecido e rejeitado", {
   expect_error(tinta(modo = "sepia"))
 })
 
+# --- a variante de texto (0.4.0) -------------------------------------------
+# Travada pela mesma razao das outras: trocar exige tocar aqui, e portanto
+# remedir -- contraste (test-site.R) e DeltaE sob daltonismo (validador do skill
+# `dataviz`, registrado em R/paleta.R com data).
+
+test_that("a variante de texto troca so o verde, e so para este valor", {
+  expect_identical(
+    paleta(modo = "escuro", uso = "texto"),
+    c(s1 = "#3987e5", s2 = "#008f56", s3 = "#d55181", s4 = "#c98500")
+  )
+  difere <- paleta(modo = "escuro") != paleta(modo = "escuro", uso = "texto")
+  expect_identical(names(paleta(modo = "escuro"))[difere], "s2")
+})
+
+test_that("marca segue sendo o padrao: os graficos nao mudam", {
+  expect_identical(paleta(modo = "escuro"), paleta(modo = "escuro", uso = "marca"))
+  expect_identical(paleta(modo = "escuro")[["s2"]], "#008300")
+})
+
+test_that("a variante de texto respeita n, na ordem", {
+  expect_identical(paleta(2, modo = "escuro", uso = "texto"),
+                   c(s1 = "#3987e5", s2 = "#008f56"))
+})
+
+test_that("texto no modo claro e erro, nao silencio", {
+  expect_error(paleta(uso = "texto"), "so existe no modo escuro")
+  expect_error(paleta(modo = "claro", uso = "texto"), "so existe no modo escuro")
+  expect_error(paleta(modo = "escuro", uso = "rotulo"))
+})
+
 test_that("os dois modos tem os mesmos nomes de slot e de tinta", {
   expect_identical(names(paleta()), names(paleta(modo = "escuro")))
   expect_identical(names(tinta()),  names(tinta(modo = "escuro")))

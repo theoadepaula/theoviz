@@ -87,6 +87,14 @@
 #' e semantica, nao estetica -- um numero existe para ser comparado com outro, e
 #' a mono e o que diz isso.
 #'
+#' @section Celula pintada com a cor da serie:
+#'
+#' Este tema nao pinta nenhuma celula de cor de serie. Quando o artigo pinta --
+#' variacao positiva em verde, por exemplo, com `gt::tab_style()` --, a cor e de
+#' **texto**, e texto tem piso de 4,5:1. Use `paleta(modo = "escuro", uso =
+#' "texto")`, nao a paleta de marca: o verde de marca (`#008300`) mede 3,86:1
+#' sobre o chao do site e foi acusado pelo Lighthouse. Ver [paleta()].
+#'
 #' @param dados     data.frame ou tibble.
 #' @param titulo    Titulo da tabela (opcional).
 #' @param subtitulo Linha de apoio abaixo do titulo (opcional).
@@ -94,7 +102,8 @@
 #' @param modo      `"claro"` (padrao) ou `"escuro"`. Ver a secao acima.
 #' @return Um objeto `gt_tbl`, encadeavel com as funcoes do pacote gt.
 #' @seealso [fmt_br()] e [fmt_pct_br()] para a formatacao pt-BR das colunas;
-#'   [tinta()] para as tintas que este tema consome.
+#'   [tinta()] para as tintas que este tema consome; [paleta()] com
+#'   `uso = "texto"` para pintar celula com a cor de uma serie.
 #' @examples
 #' tabela_gt(head(mtcars[, 1:3]), titulo = "Exemplo")
 #'

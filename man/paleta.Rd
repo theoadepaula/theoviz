@@ -4,7 +4,7 @@
 \alias{paleta}
 \title{Cores de serie}
 \usage{
-paleta(n = 4, modo = c("claro", "escuro"))
+paleta(n = 4, modo = c("claro", "escuro"), uso = c("marca", "texto"))
 }
 \arguments{
 \item{n}{Quantos slots devolver (1 a 4). Sem argumento, devolve os quatro.}
@@ -12,6 +12,10 @@ paleta(n = 4, modo = c("claro", "escuro"))
 \item{modo}{\code{"claro"} (padrao) ou \code{"escuro"}. O modo escuro tem passos
 proprios, validados contra a superficie escura -- nao e um clareamento
 automatico do claro.}
+
+\item{uso}{\code{"marca"} (padrao) para linha, ponto e barra -- piso de 3:1 -- ou
+\code{"texto"} quando a cor da serie pinta texto -- piso de 4,5:1. Ver a secao
+\emph{Marca nao e texto}. \code{"texto"} so existe com \code{modo = "escuro"}.}
 }
 \value{
 Vetor nomeado de cores em hexadecimal.
@@ -50,10 +54,47 @@ No modo \strong{claro} dois slots ficam abaixo do piso -- \code{s3} em 2,62 e \c
 isso ela vale nos dois modos: identidade de serie nunca depende so de cor.
 }
 
+\section{Marca nao e texto}{
+
+
+Os slots acima sao cores de \strong{marca} -- linha, ponto, barra --, e o piso de
+marca e 3:1. Texto tem piso de \strong{4,5:1} (WCAG AA), e o verde \code{s2}, com
+3,86:1 sobre \verb{#0d1014}, nao chega la. Por isso, quando a cor da serie vira
+\strong{texto} -- celula de tabela \code{gt} pintada pela serie, rotulo direto na ponta
+da linha, anotacao plotly --, peca \code{uso = "texto"}:
+
+\preformatted{
+verde <- paleta(2, "escuro", uso = "texto")[["s2"]]
+gt::tab_style(g, gt::cell_text(color = verde),
+              gt::cells_body(columns = variacao))
+}
+
+A variante de texto troca \strong{so o verde}: \verb{#008f56}, 4,60:1 sobre \code{noite}, a
+DeltaE 7,3 do \code{s2} em visao normal -- le como o mesmo verde. Os outros tres
+slots ja passam 4,5:1 (5,24 / 4,83 / 6,21) e saem iguais. A linha do grafico
+segue em \code{s2}; so o rotulo dela muda.
+
+Sob daltonismo, o pior par da variante de texto fica em DeltaE 6,5 -- a faixa
+6-8, legal so com codificacao secundaria. Texto sempre a tem: o proprio
+conteudo (o nome da serie, o sinal do numero). A cor reforca, nunca decide.
+
+A garantia e sobre \code{noite}, o chao em que tabelas e graficos pousam. Sobre a
+\code{chapa} o verde de texto cai para 4,26 e o magenta para 4,47: texto colorido
+dentro de cartao nao esta coberto.
+
+So existe no modo escuro. No claro, tres dos quatro slots ficam abaixo de
+4,5:1 sobre \verb{#fcfcfb} (4,30 / 2,62 / 2,11), e o site nao tem superficie clara
+contra a qual validar uma alternativa -- pedir \code{uso = "texto"} no claro e
+erro, nao silencio.
+}
+
 \examples{
 paleta()                    # os quatro, modo claro
 paleta(2)                   # so os dois primeiros: azul e verde
 paleta(modo = "escuro")     # os quatro passos do modo escuro
+
+# a cor da serie como TEXTO (celula de tabela, rotulo direto):
+paleta(modo = "escuro", uso = "texto")
 }
 \seealso{
 \code{\link[=acento]{acento()}} para o caso de uma serie so; \code{\link[=tinta]{tinta()}} para os neutros.

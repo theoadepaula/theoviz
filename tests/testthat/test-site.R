@@ -85,6 +85,25 @@ test_that("as cores de serie do modo escuro passam sobre o chao do site", {
   }
 })
 
+test_that("a cor de serie como texto passa 4,5:1 sobre o chao do site", {
+  # WCAG 1.4.3: texto precisa de 4,5:1; marca so de 3:1. O s2 de marca (#008300)
+  # mede 3,86 e o Lighthouse acusou `color-contrast` em 2026-11, nas celulas de
+  # tabela e nos rotulos diretos pintados de verde. Este e o piso que
+  # `uso = "texto"` existe para cumprir.
+  for (cor in paleta(modo = "escuro", uso = "texto")) {
+    expect_gte(contraste(cor, site("noite")), 4.5)
+  }
+  expect_equal(contraste_r(paleta(modo = "escuro", uso = "texto")[["s2"]],
+                           site("noite")), 4.60)
+})
+
+test_that("o s2 de marca nao serve como texto -- e por isso a variante existe", {
+  # Se um dia este teste falhar, o s2 de marca passou a cumprir 4,5:1 sozinho e
+  # a variante de texto pode ser aposentada.
+  expect_lt(contraste(paleta(modo = "escuro")[["s2"]], site("noite")), 4.5)
+  expect_equal(contraste_r(paleta(modo = "escuro")[["s2"]], site("noite")), 3.86)
+})
+
 test_that("o titulo do modo escuro nao e branco puro", {
   # O site proibe branco puro sobre este fundo com razao especifica: ele vibra.
   expect_false(tolower(tinta("forte", modo = "escuro")) %in% c("#ffffff", "#fff"))

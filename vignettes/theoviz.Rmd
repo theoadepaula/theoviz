@@ -122,6 +122,37 @@ dentro da faixa 6–8, legal apenas com codificação secundária. Um gráfico e
 que use **somente esses dois slots** precisa de rótulo direto ou textura. Usando
 os slots na ordem, o problema não aparece.
 
+### Marca não é texto
+
+O piso de contraste de uma **marca** — linha, ponto, barra — é 3:1. O de
+**texto** é 4,5:1. O verde `s2` mede 3,86:1 sobre o chão do site: serve como
+linha, não serve como letra. E a cor da série vira letra mais do que parece —
+no rótulo direto na ponta da linha e na célula de tabela pintada pela série.
+
+Para esses casos existe `uso = "texto"`, só no modo escuro:
+
+```{r}
+paleta(modo = "escuro", uso = "texto")
+```
+
+Muda **só o verde**, para `#008f56`: 4,60:1 sobre `#0d1014`, perto o bastante do
+`s2` (ΔE 7,3) para ler como a mesma série. O caminho óbvio — clarear o `#008300`
+sem mexer no matiz — foi medido e descartado: o verde clareado chega à
+luminosidade do âmbar, e sob protanopia os dois viram a mesma cor (ΔE 0,8). O
+`#008f56` gira o matiz um pouco para o azulado e fica com o pior par sob
+daltonismo em ΔE 6,5, a mesma faixa 6–8 em que a paleta escura já vive. Texto
+sempre carrega codificação secundária — o próprio conteúdo —, então a faixa é
+legal aqui.
+
+```r
+verde <- paleta(2, modo = "escuro", uso = "texto")[["s2"]]
+tabela_gt(d, modo = "escuro") |>
+  gt::tab_style(gt::cell_text(color = verde),
+                gt::cells_body(columns = variacao, rows = variacao > 0))
+```
+
+A linha do gráfico continua em `s2`; só o rótulo dela troca de verde.
+
 ### Tintas neutras
 
 Cinzas de texto, grade, eixo e fundo. Ficam separados das cores de série porque
