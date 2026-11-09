@@ -69,6 +69,15 @@ e semantica, nao estetica -- um numero existe para ser comparado com outro, e
 a mono e o que diz isso.
 }
 
+\section{Celula pintada com a cor da serie}{
+
+
+Este tema nao pinta nenhuma celula de cor de serie. Quando o artigo pinta --
+variacao positiva em verde, por exemplo, com \code{gt::tab_style()} --, a cor e de
+\strong{texto}, e texto tem piso de 4,5:1. Use \code{paleta(modo = "escuro", uso = "texto")}, nao a paleta de marca: o verde de marca (\verb{#008300}) mede 3,86:1
+sobre o chao do site e foi acusado pelo Lighthouse. Ver \code{\link[=paleta]{paleta()}}.
+}
+
 \examples{
 tabela_gt(head(mtcars[, 1:3]), titulo = "Exemplo")
 
@@ -77,5 +86,6 @@ tabela_gt(head(mtcars[, 1:3]), titulo = "Exemplo", modo = "escuro")
 }
 \seealso{
 \code{\link[=fmt_br]{fmt_br()}} e \code{\link[=fmt_pct_br]{fmt_pct_br()}} para a formatacao pt-BR das colunas;
-\code{\link[=tinta]{tinta()}} para as tintas que este tema consome.
+\code{\link[=tinta]{tinta()}} para as tintas que este tema consome; \code{\link[=paleta]{paleta()}} com
+\code{uso = "texto"} para pintar celula com a cor de uma serie.
 }

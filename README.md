@@ -161,6 +161,23 @@ direto nasce do modo claro e vale nos dois, por consistência.
 > escuro que use **somente esses dois** precisa de rótulo direto ou textura.
 > Usando os slots na ordem, o problema não aparece.
 
+**Marca não é texto.** Os slots são cores de marca (linha, ponto, barra), com
+piso de 3:1. Quando a cor da série pinta **texto** — rótulo direto, célula de
+tabela `gt` —, o piso é 4,5:1, e o verde de marca (3,86:1) não chega lá. Para
+isso existe a variante de texto, só no modo escuro:
+
+```r
+paleta(modo = "escuro", uso = "texto")
+#>        s1        s2        s3        s4
+#> "#3987e5" "#008f56" "#d55181" "#c98500"
+```
+
+Muda só o verde: `#008f56`, 4,60:1 sobre `#0d1014`, ΔE 7,3 do `s2` (lê como a
+mesma série). Clarear o `#008300` sem girar o matiz levava o verde à
+luminosidade do âmbar, e sob protanopia os dois ficavam iguais (ΔE 0,8); o
+`#008f56` fica com o pior par em ΔE 6,5. Os gráficos não mudam — a linha segue
+em `s2`, só o rótulo troca.
+
 `tinta()` traz os neutros — texto, grade, eixo, fundo — separados das cores de
 série porque nunca codificam dado, só estrutura. **No modo escuro elas agora são
 os tokens do site**, não valores próprios:

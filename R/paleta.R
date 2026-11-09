@@ -65,6 +65,40 @@
 # Uma consequencia que vale escrever: o `forte` do modo escuro era #ffffff, e
 # deixou de ser. O site proibe branco puro sobre este fundo com uma razao
 # especifica -- ele vibra. O titulo do site e #dde1e6, e o de um grafico tambem.
+#
+# O VERDE COMO TEXTO (0.4.0) --------------------------------------------------
+#
+# O s2 (#008300) mede 3,86:1 sobre #0d1014. Para MARCA (linha, ponto, barra) o
+# piso e 3:1 e ele passa. Para TEXTO o piso e 4,5:1, e ele nao passa -- e virava
+# texto em dois lugares, ambos no codigo dos artigos, nao neste pacote: celula
+# de tabela gt pintada com a cor da serie (`cell_text(color = s2)`) e rotulo
+# direto de grafico (`geom_text`, anotacao plotly). O Lighthouse acusou
+# `color-contrast` em 2026-11 e segurou quatro artigos em 96 de acessibilidade.
+#
+# A correcao NAO troca o s2. Grafico nao e texto; trocar o slot obrigaria
+# re-renderizar todo grafico do site e revalidar a paleta inteira por uma falha
+# que so existe no texto. Em vez disso, `paleta(uso = "texto")` devolve uma
+# variante so para texto. Medido em 2026-11-09 com o validador do skill
+# `dataviz`, contra #0d1014:
+#
+#   s2 texto = #008f56   4,60:1 sobre noite (4,26 sobre chapa)
+#                        DeltaE 7,3 do s2 em visao normal: le como o mesmo verde
+#
+# O caminho obvio -- so clarear o #008300, mantendo matiz e croma -- foi medido
+# e DESCARTADO: #269622 (4,96:1) leva o verde para a luminosidade do ambar, e
+# sob protanopia os dois viram a mesma cor (DeltaE 0,8 contra o s4). O #008f56
+# sobe a luminosidade e gira o matiz para o azulado (OKLCH h 142,5 -> 157,0),
+# e o pior par sob daltonismo fica em DeltaE 6,5 (deutan, contra o s3) e 6,6
+# (protan, contra o s4) -- a mesma faixa 6-8 em que o s2 x s4 da paleta escura
+# ja vive. Nenhum verde com 4,5:1 sobre este chao passa de 6,9 contra os tres
+# outros slots; buscou-se numa grade de ~17 mil candidatos.
+#
+# A faixa 6-8 so e legal com codificacao secundaria. Texto TEM codificacao
+# secundaria: o proprio conteudo -- o nome da serie, o sinal do numero. A cor do
+# texto reforca a identidade, nunca e a identidade.
+#
+# Os outros tres slots ja passam 4,5:1 sobre noite (5,24 / 4,83 / 6,21) e
+# saem iguais nas duas variantes.
 
 # O SITE NAO TEM MODO CLARO ---------------------------------------------------
 #
@@ -111,19 +145,64 @@
 #' 2,11 sobre `#fcfcfb`. E dessa falha que nasce a regra do rotulo direto, e por
 #' isso ela vale nos dois modos: identidade de serie nunca depende so de cor.
 #'
+#' @section Marca nao e texto:
+#'
+#' Os slots acima sao cores de **marca** -- linha, ponto, barra --, e o piso de
+#' marca e 3:1. Texto tem piso de **4,5:1** (WCAG AA), e o verde `s2`, com
+#' 3,86:1 sobre `#0d1014`, nao chega la. Por isso, quando a cor da serie vira
+#' **texto** -- celula de tabela `gt` pintada pela serie, rotulo direto na ponta
+#' da linha, anotacao plotly --, peca `uso = "texto"`:
+#'
+#' \preformatted{
+#' verde <- paleta(2, "escuro", uso = "texto")[["s2"]]
+#' gt::tab_style(g, gt::cell_text(color = verde),
+#'               gt::cells_body(columns = variacao))
+#' }
+#'
+#' A variante de texto troca **so o verde**: `#008f56`, 4,60:1 sobre `noite`, a
+#' DeltaE 7,3 do `s2` em visao normal -- le como o mesmo verde. Os outros tres
+#' slots ja passam 4,5:1 (5,24 / 4,83 / 6,21) e saem iguais. A linha do grafico
+#' segue em `s2`; so o rotulo dela muda.
+#'
+#' Sob daltonismo, o pior par da variante de texto fica em DeltaE 6,5 -- a faixa
+#' 6-8, legal so com codificacao secundaria. Texto sempre a tem: o proprio
+#' conteudo (o nome da serie, o sinal do numero). A cor reforca, nunca decide.
+#'
+#' A garantia e sobre `noite`, o chao em que tabelas e graficos pousam. Sobre a
+#' `chapa` o verde de texto cai para 4,26 e o magenta para 4,47: texto colorido
+#' dentro de cartao nao esta coberto.
+#'
+#' So existe no modo escuro. No claro, tres dos quatro slots ficam abaixo de
+#' 4,5:1 sobre `#fcfcfb` (4,30 / 2,62 / 2,11), e o site nao tem superficie clara
+#' contra a qual validar uma alternativa -- pedir `uso = "texto"` no claro e
+#' erro, nao silencio.
+#'
 #' @param n Quantos slots devolver (1 a 4). Sem argumento, devolve os quatro.
 #' @param modo `"claro"` (padrao) ou `"escuro"`. O modo escuro tem passos
 #'   proprios, validados contra a superficie escura -- nao e um clareamento
 #'   automatico do claro.
+#' @param uso `"marca"` (padrao) para linha, ponto e barra -- piso de 3:1 -- ou
+#'   `"texto"` quando a cor da serie pinta texto -- piso de 4,5:1. Ver a secao
+#'   *Marca nao e texto*. `"texto"` so existe com `modo = "escuro"`.
 #' @return Vetor nomeado de cores em hexadecimal.
 #' @seealso [acento()] para o caso de uma serie so; [tinta()] para os neutros.
 #' @examples
 #' paleta()                    # os quatro, modo claro
 #' paleta(2)                   # so os dois primeiros: azul e verde
 #' paleta(modo = "escuro")     # os quatro passos do modo escuro
+#'
+#' # a cor da serie como TEXTO (celula de tabela, rotulo direto):
+#' paleta(modo = "escuro", uso = "texto")
 #' @export
-paleta <- function(n = 4, modo = c("claro", "escuro")) {
+paleta <- function(n = 4, modo = c("claro", "escuro"),
+                   uso = c("marca", "texto")) {
   modo <- match.arg(modo)
+  uso  <- match.arg(uso)
+  if (uso == "texto" && modo == "claro") {
+    stop("`uso = \"texto\"` so existe no modo escuro: no claro, s1, s3 e s4 ",
+         "ficam abaixo de 4,5:1 sobre o fundo e nao ha alternativa validada. ",
+         "Use `modo = \"escuro\"` -- e o modo do site.", call. = FALSE)
+  }
   cores <- if (modo == "claro") c(
     s1 = "#2a78d6",  # azul
     s2 = "#008300",  # verde
@@ -135,6 +214,9 @@ paleta <- function(n = 4, modo = c("claro", "escuro")) {
     s3 = "#d55181",  # magenta -- escurecido: no fundo escuro o claro estourava
     s4 = "#c98500"   # ambar   -- ver limite s2 x s4 no cabecalho deste arquivo
   )
+  # So o verde muda como texto. Clarear sem girar o matiz colapsava com o ambar
+  # sob protanopia -- ver "O verde como texto" no cabecalho deste arquivo.
+  if (uso == "texto") cores[["s2"]] <- "#008f56"
   if (!is.numeric(n) || length(n) != 1 || n < 1 || n > length(cores)) {
     stop("`n` deve ser um numero de 1 a ", length(cores), ".", call. = FALSE)
   }
