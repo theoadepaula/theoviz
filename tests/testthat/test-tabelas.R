@@ -78,6 +78,65 @@ test_that("o modo claro segue sendo o padrao", {
   )
 })
 
+# --- headers que apontam para cabecalhos de verdade (0.4.1) ----------------
+#
+# Ate o gt 1.3.0, a coluna `2025` saia com <th id="a2025"> e <td
+# headers="2025">, e a coluna `Garrafa plastica` com <th id="Garrafa-plastica">
+# e <td headers="Garrafa plastica">. O leitor de tela perdia o cabecalho e o
+# Lighthouse acusava `td-headers-attr` nos artigos da agua mineral. Este teste
+# le o HTML como o Lighthouse le: todo id citado em `headers` tem de ser o id de
+# um <th> da mesma tabela, e nunca o da propria celula.
+
+.ids_orfaos <- function(html) {
+  ths <- regmatches(html, gregexpr("<th\\b[^>]*>", html, perl = TRUE))[[1]]
+  ths <- ths[grepl("\\sid=\"", ths)]
+  ids_th <- sub(".*\\sid=\"([^\"]*)\".*", "\\1", ths)
+
+  tds <- regmatches(html, gregexpr("<td\\b[^>]*\\sheaders=\"[^\"]*\"[^>]*>",
+                                   html, perl = TRUE))[[1]]
+  orfaos <- unlist(lapply(tds, function(td) {
+    citados <- strsplit(sub(".*\\sheaders=\"([^\"]*)\".*", "\\1", td), "\\s+")[[1]]
+    citados <- citados[nzchar(citados)]
+    proprio <- if (grepl("\\sid=\"", td)) sub(".*\\sid=\"([^\"]*)\".*", "\\1", td)
+    c(setdiff(citados, ids_th), intersect(citados, proprio))
+  }))
+  list(n_td = length(tds), orfaos = unique(orfaos))
+}
+
+test_that("todo id citado em headers= e de um <th> da tabela", {
+  # os nomes que quebravam: algarismo na frente, espaco, parentese, acento
+  d <- data.frame(
+    Embalagem          = c("Garrafao", "Copo", "Lata"),
+    `2010`             = c(1.2, 0.8, 2.1),
+    `2025`             = c(1.8, 1.1, 2.9),
+    `Garrafa plastica` = c(10, 20, 30),
+    `Valor de venda (R$)` = c(1000, 2000, 3000),
+    variacao           = c(0.1, 0.2, 0.3),
+    check.names = FALSE
+  )
+  # acento escrito em escape: o arquivo de teste fica ASCII
+  names(d)[6] <- "In\u00edcio da varia\u00e7\u00e3o"
+
+  g <- tabela_gt(d, titulo = "T", subtitulo = "s", nota = "n", modo = "escuro")
+  g <- fmt_br(g, `Valor de venda (R$)`)
+  g <- fmt_pct_br(g, 6)
+  r <- .ids_orfaos(as.character(gt::as_raw_html(g)))
+  expect_gt(r$n_td, 0)            # o teste nao passa por nao achar celula
+  expect_identical(r$orfaos, character(0))
+
+  # com grupo de linhas de nome composto (todas as linhas num grupo -- ver a
+  # secao "Cabecalhos para o leitor de tela" de ?tabela_gt)
+  g <- gt::tab_row_group(g, label = "Grupo B", rows = 3)
+  g <- gt::tab_row_group(g, label = "Grupo A", rows = 1:2)
+  r <- .ids_orfaos(as.character(gt::as_raw_html(g)))
+  expect_gt(r$n_td, 0)
+  expect_identical(r$orfaos, character(0))
+
+  # e no modo claro, que passa pelo mesmo gt
+  r <- .ids_orfaos(as.character(gt::as_raw_html(tabela_gt(d))))
+  expect_identical(r$orfaos, character(0))
+})
+
 # --- a Regra das Duas Vozes -------------------------------------------------
 
 test_that("coluna numerica sai em mono; o resto, em sans", {
