@@ -90,6 +90,21 @@ de marca (`#008300`) mede 3,86:1 sobre o chao do site e foi acusado pelo
 Lighthouse. Ver
 [`paleta()`](https://theoadepaula.github.io/theoviz/reference/paleta.md).
 
+## Cabecalhos para o leitor de tela
+
+Cada celula do corpo leva um atributo `headers` com os ids dos
+cabecalhos que a descrevem. Coluna com nome que comeca por algarismo
+(`2025`) ou que tem espaco (`Garrafa plastica`) gerava, ate o `gt`
+1.3.0, um `headers` que nao batia com o `id` do cabecalho – e o
+Lighthouse acusava `td-headers-attr`. Por isso o pacote exige `gt` 1.4.0
+ou posterior. Pode nomear as colunas como quiser; nao precisa contornar
+com `cols_label()`.
+
+Resta um caso no proprio `gt`: com
+[`gt::tab_row_group()`](https://gt.rstudio.com/reference/tab_row_group.html)
+cobrindo so parte das linhas, as que ficam de fora citam um grupo `NA`
+que nao existe. Ponha todas as linhas em algum grupo.
+
 ## See also
 
 [`fmt_br()`](https://theoadepaula.github.io/theoviz/reference/fmt_br.md)

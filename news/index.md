@@ -1,5 +1,56 @@
 # Changelog
 
+## theoviz 0.4.1
+
+**[`tabela_gt()`](https://theoadepaula.github.io/theoviz/reference/tabela_gt.md)
+passa a sair com `headers` que apontam para cabeçalhos de verdade.**
+Nenhuma mudança visual: o HTML muda só nos atributos `id` e `headers`. O
+pacote agora exige `gt (>= 1.4.0)`.
+
+### O que quebrava antes
+
+Cada `<td>` do `gt` leva um `headers="..."` com os ids dos `<th>` que o
+descrevem — é por ele que o leitor de tela anuncia “2025” antes de
+“1,80”. Até o `gt` 1.3.0, o `id` do `<th>` era limpo e o `headers` do
+`<td>` não:
+
+| coluna | `<th id>` | `<td headers>` |
+|----|----|----|
+| `2025` | `a2025` | `2025` |
+| `Garrafa plástica` | `Garrafa-plástica` | `Garrafa plástica` (dois ids: `Garrafa`, `plástica`) |
+
+Nenhum dos ids citados existia. O leitor de tela perdia o cabeçalho e o
+Lighthouse acusava `td-headers-attr` (“The headers attribute is not
+exclusively used to refer to other header cells”), segurando em 96 de
+acessibilidade os dois artigos da água mineral. A mesma falha estava em
+“A linha errada da produção de brita” e “Nem toda tonelada vale o
+mesmo”.
+
+### A correção
+
+É do próprio `gt` 1.4.0 (rstudio/gt#2085), que limpa os dois lados do
+mesmo jeito. O pacote só sobe o piso da dependência. A alternativa —
+renomear as colunas por baixo dentro de
+[`tabela_gt()`](https://theoadepaula.github.io/theoviz/reference/tabela_gt.md)
+— quebraria quem encadeia `` fmt_br(g, `2025`) `` pelo nome original.
+
+Um teste novo lê o HTML como o Lighthouse lê: todo id citado em
+`headers` tem de ser o id de um `<th>` da mesma tabela, com nomes de
+coluna que começam por algarismo, têm espaço, parêntese e acento, e com
+grupos de linhas.
+
+Resta um caso no `gt` 1.4.0: com
+[`gt::tab_row_group()`](https://gt.rstudio.com/reference/tab_row_group.html)
+cobrindo **só parte** das linhas, as que ficam de fora citam um grupo
+`NA` que não existe. Nenhum artigo do site faz isso hoje; está
+documentado em
+[`?tabela_gt`](https://theoadepaula.github.io/theoviz/reference/tabela_gt.md).
+
+### Depois de instalar
+
+Os artigos congelados continuam com o HTML antigo até o re-render
+(`rm -rf quarto/_freeze` e `npm run build:quarto` no site).
+
 ## theoviz 0.4.0
 
 **A cor da série ganha uma variante para texto.** Novo argumento:
