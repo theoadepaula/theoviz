@@ -78,6 +78,21 @@ variacao positiva em verde, por exemplo, com \code{gt::tab_style()} --, a cor e 
 sobre o chao do site e foi acusado pelo Lighthouse. Ver \code{\link[=paleta]{paleta()}}.
 }
 
+\section{Cabecalhos para o leitor de tela}{
+
+
+Cada celula do corpo leva um atributo \code{headers} com os ids dos cabecalhos que
+a descrevem. Coluna com nome que comeca por algarismo (\code{2025}) ou que tem
+espaco (\verb{Garrafa plastica}) gerava, ate o \code{gt} 1.3.0, um \code{headers} que nao
+batia com o \code{id} do cabecalho -- e o Lighthouse acusava \code{td-headers-attr}.
+Por isso o pacote exige \code{gt} 1.4.0 ou posterior. Pode nomear as colunas como
+quiser; nao precisa contornar com \code{cols_label()}.
+
+Resta um caso no proprio \code{gt}: com \code{\link[gt:tab_row_group]{gt::tab_row_group()}} cobrindo so parte
+das linhas, as que ficam de fora citam um grupo \code{NA} que nao existe. Ponha
+todas as linhas em algum grupo.
+}
+
 \examples{
 tabela_gt(head(mtcars[, 1:3]), titulo = "Exemplo")
 

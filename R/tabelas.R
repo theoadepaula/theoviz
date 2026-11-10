@@ -38,6 +38,25 @@
 # codigo: e o sinal de que aquilo e medida. O `tabular-nums` ja estava aqui
 # desde a 0.1.0 e resolvia metade do problema -- alinhava os algarismos, mas
 # deixava o numero na voz da prosa.
+#
+# OS `headers` QUE NAO APONTAVAM PARA NADA (corrigido na 0.4.1) ---------------
+#
+# Cada <td> do gt leva um `headers="..."` com os ids dos cabecalhos que o
+# descrevem -- e o que o leitor de tela le antes do valor ("2025: 1,80").
+# Ate o gt 1.3.0, o `id` do <th> passava por uma limpeza (nome que comeca por
+# algarismo ganha um "a" na frente; espaco vira hifen) e o `headers` do <td>
+# NAO: a coluna `2025` tinha <th id="a2025"> e <td headers="2025">; a coluna
+# `Garrafa plastica` tinha <th id="Garrafa-plastica"> e <td headers="Garrafa
+# plastica"> -- dois ids, nenhum deles existente. O leitor de tela perdia o
+# cabecalho e o Lighthouse acusava `td-headers-attr`, segurando em 96 de
+# acessibilidade os artigos da agua mineral.
+#
+# A correcao e do gt 1.4.0 (rstudio/gt#2085, PR #2173), que passa a limpar os
+# dois lados do mesmo jeito. Por isso o DESCRIPTION exige `gt (>= 1.4.0)`, em
+# vez de este arquivo renomear colunas por baixo -- o que quebraria quem
+# encadeia `fmt_br(g, `2025`)` pelo nome original. O teste em
+# test-tabelas.R confere o HTML: todo id citado em `headers` tem de ser de um
+# <th> da mesma tabela.
 
 # Aplica o par de fontes do site. Sao as mesmas duas familias do CSS, com a
 # cadeia de fallback do gt atras, para o caso de a fonte nao carregar.
@@ -94,6 +113,19 @@
 #' **texto**, e texto tem piso de 4,5:1. Use `paleta(modo = "escuro", uso =
 #' "texto")`, nao a paleta de marca: o verde de marca (`#008300`) mede 3,86:1
 #' sobre o chao do site e foi acusado pelo Lighthouse. Ver [paleta()].
+#'
+#' @section Cabecalhos para o leitor de tela:
+#'
+#' Cada celula do corpo leva um atributo `headers` com os ids dos cabecalhos que
+#' a descrevem. Coluna com nome que comeca por algarismo (`2025`) ou que tem
+#' espaco (`Garrafa plastica`) gerava, ate o `gt` 1.3.0, um `headers` que nao
+#' batia com o `id` do cabecalho -- e o Lighthouse acusava `td-headers-attr`.
+#' Por isso o pacote exige `gt` 1.4.0 ou posterior. Pode nomear as colunas como
+#' quiser; nao precisa contornar com `cols_label()`.
+#'
+#' Resta um caso no proprio `gt`: com [gt::tab_row_group()] cobrindo so parte
+#' das linhas, as que ficam de fora citam um grupo `NA` que nao existe. Ponha
+#' todas as linhas em algum grupo.
 #'
 #' @param dados     data.frame ou tibble.
 #' @param titulo    Titulo da tabela (opcional).
