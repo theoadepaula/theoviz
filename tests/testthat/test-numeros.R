@@ -27,3 +27,33 @@ test_that("mil divide por mil e arredonda", {
   expect_identical(mil(1500), "2")          # arredondamento do formatC
   expect_identical(mil(137063, dec = 1), "137,1")
 })
+
+test_that("NA sai \"NA\", sem padding, com qualquer numero de casas", {
+  # formatC() aplicava largura minima `digits + 1` aos valores nao finitos:
+  # ate a 0.4.1, num_br(NA, 2) devolvia " NA" e num_br(NA, 3), "  NA".
+  for (dec in 0:3) {
+    expect_identical(num_br(NA_real_, dec), "NA", info = paste("dec =", dec))
+    expect_identical(num_br(NA, dec), "NA", info = paste("dec =", dec))
+    expect_identical(num_br(NA_integer_, dec), "NA", info = paste("dec =", dec))
+    expect_identical(mil(NA, dec), "NA", info = paste("dec =", dec))
+    expect_identical(pct_br(NA, dec), "NA", info = paste("dec =", dec))
+  }
+})
+
+test_that("NA no meio de um vetor nao herda largura dos vizinhos", {
+  expect_identical(num_br(c(NA, 1, NaN, Inf, -Inf), 2),
+                   c("NA", "1,00", "NaN", "Inf", "-Inf"))
+  expect_identical(pct_br(c(12.34, NA), 1), c("12,3%", "NA"))
+})
+
+test_that("a correcao do NA nao muda a saida de numero valido", {
+  # valores travados com a saida da 0.4.1, antes da correcao
+  x <- c(0, -2.25, 1234.567, 1e6)
+  expect_identical(num_br(x, 0), c("0", "-2", "1.235", "1.000.000"))
+  expect_identical(num_br(x, 1), c("0,0", "-2,2", "1.234,6", "1.000.000,0"))
+  expect_identical(num_br(x, 2), c("0,00", "-2,25", "1.234,57", "1.000.000,00"))
+  expect_identical(num_br(x, 3),
+                   c("0,000", "-2,250", "1.234,567", "1.000.000,000"))
+  expect_identical(num_br(c(x, NA), 2),
+                   c("0,00", "-2,25", "1.234,57", "1.000.000,00", "NA"))
+})
