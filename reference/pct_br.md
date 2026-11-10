@@ -20,11 +20,15 @@ pct_br(x, dec = 1)
 
 ## Value
 
-Vetor de texto, com o sinal de porcento colado.
+Vetor de texto, com o sinal de porcento colado. `NA` sai `"NA"`, sem o
+sinal, como em
+[`num_br()`](https://theoadepaula.github.io/theoviz/reference/num_br.md).
 
 ## Examples
 
 ``` r
 pct_br(33.126)  # "33,1%"
 #> [1] "33,1%"
+pct_br(NA)      # "NA"
+#> [1] "NA"
 ```

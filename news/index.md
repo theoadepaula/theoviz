@@ -1,5 +1,37 @@
 # Changelog
 
+## theoviz 0.4.2
+
+**`NA` sai `"NA"` em
+[`num_br()`](https://theoadepaula.github.io/theoviz/reference/num_br.md),
+[`pct_br()`](https://theoadepaula.github.io/theoviz/reference/pct_br.md)
+e [`mil()`](https://theoadepaula.github.io/theoviz/reference/mil.md),
+com qualquer número de casas.** Nenhum número válido muda de saída — há
+teste travando 0, -2,25, 1.234,567 e 1e6 com 0 a 3 casas.
+
+### O que quebrava antes
+
+[`formatC()`](https://rdrr.io/r/base/formatc.html), sem `width`, usa
+largura mínima `digits + 1` e a aplica só aos valores não finitos. Com 0
+ou 1 casa isso não aparecia; com 2, `num_br(NA, 2)` devolvia `" NA"`, e
+com 3, `" NA"` — espaço calado no meio de uma frase ou de uma célula.
+Num vetor, o `NA` ainda se alinhava ao `NaN`/`Inf` vizinho. `pct_br(NA)`
+saía `" NA%"`, e `num_br(NA)` com o `NA` lógico dava erro
+(`unsupported type`).
+
+### Agora
+
+- Valores não finitos (`NA`, `NaN`, `Inf`, `-Inf`) saem sem padding.
+- `pct_br(NA)` devolve `"NA"`, sem o sinal de porcento.
+- Um vetor lógico só de `NA` é tratado como `NA` numérico.
+
+As tabelas não são afetadas:
+[`fmt_br()`](https://theoadepaula.github.io/theoviz/reference/fmt_br.md)
+e
+[`fmt_pct_br()`](https://theoadepaula.github.io/theoviz/reference/fmt_pct_br.md)
+usam o `gt`, não
+[`num_br()`](https://theoadepaula.github.io/theoviz/reference/num_br.md).
+
 ## theoviz 0.4.1
 
 **[`tabela_gt()`](https://theoadepaula.github.io/theoviz/reference/tabela_gt.md)

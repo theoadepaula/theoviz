@@ -15,7 +15,7 @@ quanto colado no texto de um artigo."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">theoviz</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -68,6 +68,12 @@ quanto colado no texto de um artigo.</p>
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>Vetor de texto do mesmo comprimento de <code>x</code>.</p>
     </div>
+    <div class="section level2">
+    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
+    <p>Valores nao finitos saem sem espaco: <code>NA</code> vira <code>"NA"</code> com qualquer numero
+de casas, assim como <code>NaN</code>, <code>Inf</code> e <code>-Inf</code>. Um <code>NA</code> logico solto (o <code>NA</code> de
+<code>c(NA, NA)</code> ou de uma coluna vazia) e tratado como <code>NA</code> numerico.</p>
+    </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
@@ -75,6 +81,8 @@ quanto colado no texto de um artigo.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "1.234.567"</span>
 <span class="r-in"><span><span class="fu">num_br</span><span class="op">(</span><span class="fl">33.126</span>, dec <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>  <span class="co"># "33,13"</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "33,13"</span>
+<span class="r-in"><span><span class="fu">num_br</span><span class="op">(</span><span class="cn">NA</span>, dec <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>      <span class="co"># "NA"</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "NA"</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

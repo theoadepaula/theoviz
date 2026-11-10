@@ -13,7 +13,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">theoviz</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -39,6 +39,22 @@
       <small>Source: <a href="https://github.com/theoadepaula/theoviz/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.4.2" id="theoviz-042">theoviz 0.4.2<a class="anchor" aria-label="anchor" href="#theoviz-042"></a></h2>
+<p><strong><code>NA</code> sai <code>"NA"</code> em <code><a href="../reference/num_br.html">num_br()</a></code>, <code><a href="../reference/pct_br.html">pct_br()</a></code> e <code><a href="../reference/mil.html">mil()</a></code>, com qualquer número de casas.</strong> Nenhum número válido muda de saída — há teste travando 0, -2,25, 1.234,567 e 1e6 com 0 a 3 casas.</p>
+<div class="section level3">
+<h3 id="o-que-quebrava-antes-0-4-2">O que quebrava antes<a class="anchor" aria-label="anchor" href="#o-que-quebrava-antes-0-4-2"></a></h3>
+<p><code><a href="https://rdrr.io/r/base/formatc.html" class="external-link">formatC()</a></code>, sem <code>width</code>, usa largura mínima <code>digits + 1</code> e a aplica só aos valores não finitos. Com 0 ou 1 casa isso não aparecia; com 2, <code>num_br(NA, 2)</code> devolvia <code>" NA"</code>, e com 3, <code>"  NA"</code> — espaço calado no meio de uma frase ou de uma célula. Num vetor, o <code>NA</code> ainda se alinhava ao <code>NaN</code>/<code>Inf</code> vizinho. <code>pct_br(NA)</code> saía <code>"  NA%"</code>, e <code>num_br(NA)</code> com o <code>NA</code> lógico dava erro (<code>unsupported type</code>).</p>
+</div>
+<div class="section level3">
+<h3 id="agora-0-4-2">Agora<a class="anchor" aria-label="anchor" href="#agora-0-4-2"></a></h3>
+<ul><li>Valores não finitos (<code>NA</code>, <code>NaN</code>, <code>Inf</code>, <code>-Inf</code>) saem sem padding.</li>
+<li>
+<code>pct_br(NA)</code> devolve <code>"NA"</code>, sem o sinal de porcento.</li>
+<li>Um vetor lógico só de <code>NA</code> é tratado como <code>NA</code> numérico.</li>
+</ul><p>As tabelas não são afetadas: <code><a href="../reference/fmt_br.html">fmt_br()</a></code> e <code><a href="../reference/fmt_pct_br.html">fmt_pct_br()</a></code> usam o <code>gt</code>, não <code><a href="../reference/num_br.html">num_br()</a></code>.</p>
+</div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.4.1" id="theoviz-041">theoviz 0.4.1<a class="anchor" aria-label="anchor" href="#theoviz-041"></a></h2>
 <p><strong><code><a href="../reference/tabela_gt.html">tabela_gt()</a></code> passa a sair com <code>headers</code> que apontam para cabeçalhos de verdade.</strong> Nenhuma mudança visual: o HTML muda só nos atributos <code>id</code> e <code>headers</code>. O pacote agora exige <code>gt (&gt;= 1.4.0)</code>.</p>

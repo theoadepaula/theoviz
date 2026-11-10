@@ -10,13 +10,13 @@ Source:
 [`DESCRIPTION`](https://github.com/theoadepaula/theoviz/blob/main/DESCRIPTION)
 
 Albuquerque de Paula T (2026). *theoviz: Identidade Visual dos Artigos
-de Dados Abertos*. R package version 0.4.1,
+de Dados Abertos*. R package version 0.4.2,
 <https://theoadepaula.github.io/theoviz/>.
 
     @Manual{,
       title = {theoviz: Identidade Visual dos Artigos de Dados Abertos},
       author = {Theo {Albuquerque de Paula}},
       year = {2026},
-      note = {R package version 0.4.1},
+      note = {R package version 0.4.2},
       url = {https://theoadepaula.github.io/theoviz/},
     }
