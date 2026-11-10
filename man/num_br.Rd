@@ -18,7 +18,13 @@ Vetor de texto do mesmo comprimento de \code{x}.
 Milhar com ponto, decimal com virgula. Serve tanto dentro de uma tabela
 quanto colado no texto de um artigo.
 }
+\details{
+Valores nao finitos saem sem espaco: \code{NA} vira \code{"NA"} com qualquer numero
+de casas, assim como \code{NaN}, \code{Inf} e \code{-Inf}. Um \code{NA} logico solto (o \code{NA} de
+\code{c(NA, NA)} ou de uma coluna vazia) e tratado como \code{NA} numerico.
+}
 \examples{
 num_br(1234567)          # "1.234.567"
 num_br(33.126, dec = 2)  # "33,13"
+num_br(NA, dec = 2)      # "NA"
 }

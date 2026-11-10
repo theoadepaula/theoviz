@@ -12,11 +12,13 @@ pct_br(x, dec = 1)
 \item{dec}{Casas decimais.}
 }
 \value{
-Vetor de texto, com o sinal de porcento colado.
+Vetor de texto, com o sinal de porcento colado. \code{NA} sai \code{"NA"},
+sem o sinal, como em \code{\link[=num_br]{num_br()}}.
 }
 \description{
 Percentual em pt-BR
 }
 \examples{
 pct_br(33.126)  # "33,1\%"
+pct_br(NA)      # "NA"
 }
